@@ -1,0 +1,28 @@
+<FONT COLOR="navy">
+<h1>LAB WEB COMPONENT - DSI 2019-20</h1>
+</FONT>
+<hr size=10 noshade="noshade">
+<FONT COLOR="red">
+<h2>Alta/Nuevo Alumno</h2>
+</FONT>
+<p>
+  <span>NIA:</span>
+  <input type="text" [(ngModel)]="alumno.nia">
+</p>
+<p>
+  <span>Nombre Alumno:</span>
+  <input type="text" [(ngModel)]="alumno.nombre">
+</p>
+<p>
+  <span>Apellidos del alumno:</span>
+  <input type="text" [(ngModel)]="alumno.apellidos">
+</p>
+<p>
+  <span>Grupo:</span>
+  <select [(ngModel)]="alumno.grupo">
+    <option *ngFor="let grupo of grupos" value="{{grupo.id}}">{{grupo.nombre}}</option>
+  </select>
+</p>
+<p>
+  <button (click)="this.nuevoAlumno()"> Alta del Alumno en el Sistema </button>
+</p>
