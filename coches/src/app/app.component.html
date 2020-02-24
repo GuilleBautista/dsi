@@ -4,21 +4,62 @@
 <body>
   <table style="width:100%">
  <tr>
-   <th>Foto Coche</th>
-   <th>Precio Coche</th>
-   <th>Sumar restar</th>
-   <th> Nada </th>
+   <th>Foto</th>
+   <th>Marca</th>
+   <th>Modelo</th>
+   <th>Año</th>
+   <th>En venta desde</th>
+   <th>Precio</th>
+   <th>PVP</th>
+   <th>Acciones</th>
  </tr>
+
  <tr>
-   <td> <img src={{micoche.photo}}> </td>
-   <td>{{value}}</td>
-   <button type='button' (click)='more_value()'>Sumar</button>
-   <td>50</td>
+   <td> <img class="car_picture" src={{micoche.photo}}> </td>
+   <td>{{micoche.brand}}</td>
+   <td>{{micoche.model}}</td>
+   <td>{{micoche.year}}</td>
+   <td>{{micoche.release_date}}</td>
+   <td>{{micoche.price}}</td>
+   <td>{{micoche.pvp}}</td>
+   <td><button type='button' (click)='micoche.low_price()'>Rebajar</button></td>
+   <td><button type='button' (click)='micoche.sell()'>Vendido</button></td>
  </tr>
+
  <tr>
-   <td>Eve</td>
-   <td>Jackson</td>
-   <td>94</td>
+   <td> <img class="car_picture" src={{micoche2.photo}}> </td>
+   <td>{{micoche2.brand}}</td>
+   <td>{{micoche2.model}}</td>
+   <td>{{micoche2.year}}</td>
+   <td>{{micoche2.release_date}}</td>
+   <td>{{micoche2.price}}</td>
+   <td>{{micoche2.pvp}}</td>
+   <td><button type='button' (click)='micoche2.low_price()'>Rebajar</button></td>
+   <td><button type='button' (click)='micoche2.sell()'>Vendido</button></td>
+ </tr>
+
+ <tr>
+   <td> <img class="car_picture" src={{micoche3.photo}}> </td>
+   <td>{{micoche3.brand}}</td>
+   <td>{{micoche3.model}}</td>
+   <td>{{micoche3.year}}</td>
+   <td>{{micoche3.release_date}}</td>
+   <td>{{micoche3.price}}</td>
+   <td>{{micoche3.pvp}}</td>
+   <td><button type='button' (click)='micoche3.low_price()'>Rebajar</button></td>
+   <td><button type='button' (click)='micoche3.sell()'>Vendido</button></td>
+ </tr>
+
+ <tr>
+   <td> <img class="car_picture" src={{micoche4.photo}}> </td>
+   <td>{{micoche4.brand}}</td>
+   <td>{{micoche4.model}}</td>
+   <td>{{micoche4.year}}</td>
+   <td>{{micoche4.release_date}}</td>
+   <td>{{micoche4.price}}</td>
+   <td>{{micoche4.pvp}}</td>
+   <td><button type='button' (click)='micoche4.low_price()'>Rebajar</button></td>
+   <td><button type='button' (click)='micoche4.sell()'>Vendido</button></td>
  </tr>
 </table>
   </body>

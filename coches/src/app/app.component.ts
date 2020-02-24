@@ -8,13 +8,11 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'coches';
 
-  public value=0;
-
-  public more_value() {
-      this.value+=1;
-  }
-
   public micoche = new Coche();
+  public micoche2 = new Coche();
+  public micoche3 = new Coche();
+  public micoche4 = new Coche();
+
 
 }
 
@@ -42,7 +40,7 @@ export class Coche{
   }
 
   public sell(){
-    alert('llorar');
+    alert('hi');
   }
 
 
