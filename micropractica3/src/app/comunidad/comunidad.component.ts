@@ -1,4 +1,4 @@
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, OnInit, Output, Input} from '@angular/core';
 import {Form, FormsModule} from '@angular/forms';
 
 @Component({
@@ -11,16 +11,39 @@ import {Form, FormsModule} from '@angular/forms';
 
 export class ComunidadComponent implements OnInit {
 
-  constructor() { }
+  constructor() {
+    this.comunities=[
+      "Madrid",
+      "Aragon",
+      "Navarra",
+      "Castilla-Leon"
+    ];
+    this.provincias=[
+      ["Madrid"],["Teruel", "Zaragoza", "Huesca"],["Navarra"],["Ávila", "Salamanca", "Zamora", "León", "Palencia", "Burgos", "Soria", "Valladolid", "Segovia"] 
+    ];
+    this.provincia=2;
+
+    this.aux=this.provincias[this.provincia];
+   }
 
   ngOnInit(): void {
   }
 
-  @Output() public comunity:string;
+  public provincias:string[][];
 
+  @Input() public provincia:number;
 
-  select(value:string){
-    this.comunity=value;
+  @Output() public selected:string;
+
+  @Output() public comunities:string[];
+
+  @Output() public aux:string[];
+
+  select(value:string, index:number){
+    this.selected=value;
+    this.provincia=index;
+    this.aux=this.provincias[this.provincia];
+
   }
 
 }

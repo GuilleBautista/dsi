@@ -2,11 +2,15 @@
 
 <label for="cars">Choose a car:</label>
 
-<select id="hola">
- <option value="volvo">Volvo</option>
- <option value="saab">Saab</option>
- <option value="mercedes" (click)='select("mercedes")'>Mercedes</option>
- <option value="audi" (click)='select("audi")' >Audi</option>
+<select id="comunidades">
+ <option *ngFor="let com of comunities; index as i" (click)='select(com, i)'>
+    {{com}}
+ </option>
 </select>
 
-<p>{{comunity}}</p>
+
+<select id="provincias">
+    <option *ngFor="let prov of aux">
+        {{prov}}
+    </option>
+</select>
