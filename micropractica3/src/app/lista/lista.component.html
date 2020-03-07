@@ -1,0 +1,15 @@
+<div class="a">
+
+  {{nombre1}}
+  <select [(ngModel)]="valor">
+    <option selected>-</option>
+    <option *ngFor="let op1 of opciones1">{{op1}}</option>
+  </select>
+
+
+  {{nombre2}}
+  <select>
+    <option *ngFor="let op2 of opciones2[opciones1.indexOf(valor)]">{{op2}}</option>
+  </select>
+
+</div>

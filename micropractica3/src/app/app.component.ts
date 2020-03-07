@@ -7,4 +7,14 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'micropractica3';
+
+  nombreLista1:string;
+  nombreLista2:string;
+
+  constructor(){
+    this.nombreLista1 = "Comunidad";
+    this.nombreLista2 = "Provincia";
+  }
+
+
 }
