@@ -1,0 +1,52 @@
+<!-- Popup Registro -->
+<h2 class="titleRegister">Registro</h2>
+
+<br>
+
+<!-- Nombre -->
+<mat-form-field class="inputName">
+  <!-- Guardamos su valor en data.name -->
+  <input matInput placeholder="Introduce un nombre" [(ngModel)]="data.name" required>
+</mat-form-field>
+
+<!-- Nombre de usuario -->
+<mat-form-field class="inputNameuser">
+  <!-- Guardamos su valor en data.username -->
+  <input matInput placeholder="Introduce un nombre de usuario" [(ngModel)]="data.username" required>
+</mat-form-field>
+<!-- Comprobamos que tiene un mínimo de 5 letras y sino sale un error -->
+<mat-error *ngIf="data.username != undefined && data.username.length<5">Mínimo 5 letras</mat-error>
+
+<!-- Contraseña -->
+<div>
+  <mat-form-field appearance="fill" class="inputPassword">
+    <mat-label>Introduce una contraseña</mat-label>
+    <!-- Guardamos su valor en data.password -->
+    <input matInput [type]="hide ? 'password' : 'text'" [(ngModel)]="data.password" required>
+    <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </button>
+  </mat-form-field>
+  <!-- Comprobamos que tiene un mínimo de 6 letras y sino sale un error -->
+  <mat-error *ngIf="data.password != undefined && data.password.length<6">Mínimo 6 letras</mat-error>
+</div>
+
+<!-- Confirmar contraseña -->
+<div>
+  <mat-form-field appearance="fill" class="inputPassword">
+    <mat-label>Repite la contraseña</mat-label>
+    <!-- Guardamos su valor en passwordR -->
+    <input matInput [type]="hide ? 'password' : 'text'" [(ngModel)]="passwordR" required>
+    <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </button>
+  </mat-form-field>
+  <!-- Comprobamos que la contraseña repetida es igual a la contraseña y sino sale un error -->
+  <mat-error *ngIf="passwordR != undefined && passwordR != data.password">Contraseña distinta</mat-error>
+</div>
+
+<!-- Botón Finalizar -->
+<div class="centerRegister">
+  <!-- Para que no lo podamos pulsar hasta que no hayamos rellenado todos los campos hacemos todas las comparaciones -->
+  <button type="submit" [disabled]="data.name == undefined || data.name =='' || data.username == undefined || data.username =='' || data.password == undefined || data.password =='' || passwordR == undefined || passwordR =='' || passwordR != data.password" class="buttonR" mat-raised-button color="primary" routerLink="/principalpage" (click)='onNoClick()'>Finalizar</button>
+</div>

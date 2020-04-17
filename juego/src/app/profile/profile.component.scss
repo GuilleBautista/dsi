@@ -1,0 +1,17 @@
+.wallpaperP{
+  background-image: url('/assets/img/fondo.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card{
+  width: 850px;
+  height: 600px;
+  background-color: white;
+}

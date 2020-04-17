@@ -1,0 +1,28 @@
+.wallpaperPP{
+  background-image: url('/assets/img/fondo.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100%;
+  width: 100%;
+}
+
+.buttons{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 630px;
+}
+
+.buttonC{
+  width: 280px;
+  height: 80px;
+  font-size: 30px;
+}
+
+.buttonU{
+  width: 320px;
+  height: 80px;
+  font-size: 30px;
+  margin-left: 30px;
+}

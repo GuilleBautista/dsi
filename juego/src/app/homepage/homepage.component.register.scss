@@ -1,0 +1,35 @@
+.centerRegister{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.titleRegister{
+  font-size: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.inputName{
+  width: 250px;
+  height: 80px;
+  font-size: 20px;
+}
+
+.inputNameuser{
+  width: 300px;
+  height: 80px;
+  font-size: 20px;
+}
+
+.inputPassword{
+  width: 330px;
+  font-size: 20px;
+}
+
+.buttonR{
+  font-size: 18px;
+}

@@ -1,0 +1,26 @@
+<!-- Popup Inicio de sesión -->
+<h2 class="titleLogin">Inicio de sesión</h2>
+<br>
+<!-- Input Nombre de usuario -->
+<mat-form-field class="inputNameuser">
+  <!-- Guardamos su valor en data.username -->
+  <input matInput placeholder="Nombre de usuario" [(ngModel)]="data.username" required>
+</mat-form-field>
+
+<!-- Input Contraseña -->
+<div>
+  <mat-form-field appearance="fill" class="inputPassword">
+    <mat-label>Contraseña</mat-label>
+    <!-- Guardamos su valor en data.password -->
+    <input matInput [type]="hide ? 'password' : 'text'" [(ngModel)]="data.password" required>
+    <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </button>
+  </mat-form-field>
+</div>
+
+<!-- Botón Iniciar -->
+<div class="centerLogin">
+  <!-- Para que no lo podamos pulsar hasta que no hayamos rellenado todos los campos hacemos todas las comparaciones -->
+  <button type="submit" [disabled]="data.username == undefined || data.username =='' || data.password == undefined || data.password ==''" class="buttonI" mat-raised-button color="primary" routerLink="/principalpage" (click)='onNoClick()'>Iniciar</button>
+</div>
