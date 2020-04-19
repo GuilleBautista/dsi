@@ -5,6 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { HomepageComponent, loginDialog, registerDialog } from './homepage/homepage.component';
 import { PrincipalPageComponent } from './principal-page/principal-page.component';
 import { GameComponent } from './game/game.component';
+import { SetSelectorComponent } from './set-selector/set-selector.component';
 import { ProfileComponent } from './profile/profile.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: '', component: HomepageComponent, pathMatch: 'full'}, //Para que cuando la ruta sea '' se vaya a la página de inicio
   { path: 'principalpage', component: PrincipalPageComponent },
   { path: 'game', component: GameComponent },
+  { path: 'set-selector', component: SetSelectorComponent,  },
   { path: 'profile', component: ProfileComponent },
   { path: "**", component: PageNotFoundComponent }  //Para que cuando la ruta sea desconocida se vaya a la página de no encontrado
 ];

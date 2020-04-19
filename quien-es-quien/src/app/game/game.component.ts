@@ -9,8 +9,10 @@ export class GameComponent implements OnInit {
 
   //Matriz para el tablero
   public matrix:Array<Array<number>>;
+  public set:Number;
 
   constructor() {
+    this.set=history.state.param_not_in_url;
     this.matrix=[];
 
     //Para rellenar la matriz
@@ -23,6 +25,7 @@ export class GameComponent implements OnInit {
    }
 
   ngOnInit(): void {
+    
   }
 
 
