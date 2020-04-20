@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter} from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 
@@ -18,8 +18,6 @@ export class SetSelectorComponent implements OnInit {
   
   //Matriz para el tablero
   public Sets:Array<any>;
-
-  @Output() set_seleccionado = new EventEmitter();
 
   constructor(public router: Router, public route: ActivatedRoute) {
 
