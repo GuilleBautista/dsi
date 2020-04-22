@@ -16,16 +16,16 @@ export class GameComponent implements OnInit {
     this.matrix=[];
 
     //Para rellenar la matriz
-    for(let i=0; i<3; i++){
+    for(let i=0; i<4; i++){
       this.matrix.push( [] ) ;
-      for(let j=0; j<8; j++){
+      for(let j=0; j<6; j++){
         this.matrix[i].push(0);
       }
     }
    }
 
   ngOnInit(): void {
-    
+
   }
 
 

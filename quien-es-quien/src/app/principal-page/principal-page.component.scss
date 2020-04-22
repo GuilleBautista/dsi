@@ -11,18 +11,22 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 630px;
+  height: 80%;
 }
 
 .buttonC{
-  width: 280px;
-  height: 80px;
-  font-size: 30px;
+  width: 25%;
+  height: 12%;
+  font-size: 40px;
+  background-color: #ed1c24;
+  color: white;
 }
 
 .buttonU{
-  width: 320px;
-  height: 80px;
-  font-size: 30px;
-  margin-left: 30px;
+  width: 25%;
+  height: 12%;
+  font-size: 40px;
+  margin-left: 2%;
+  background-color: #235789;
+  color: white;
 }

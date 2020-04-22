@@ -17,6 +17,8 @@
   border: 3px solid black;
   display: inline;
   position: relative;
+  cursor: default;
+
 }
 
 .titleProfile{
@@ -66,7 +68,6 @@
 .photoProfile{
   width: 25%;
   height: auto;
-  border: 2px solid black;
   margin: 2%;
   position: absolute;
   top: 0;
@@ -76,4 +77,13 @@
 .userPhotoProfile{
   width: 100%;
   height: auto;
+  border: 2px solid black;
+}
+
+.rankingLink{
+  float: right;
+  margin-right: 0%;
+  width: 20%;
+  text-align: right;
+  cursor: pointer;
 }

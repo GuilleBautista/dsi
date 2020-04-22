@@ -54,7 +54,7 @@ import { SetSelectorComponent } from './set-selector/set-selector.component';
     HeaderComponent,
     FooterComponent,
     routingComponents,
-    SetSelectorComponent,
+    SetSelectorComponent
   ],
   imports: [
     FormsModule,
