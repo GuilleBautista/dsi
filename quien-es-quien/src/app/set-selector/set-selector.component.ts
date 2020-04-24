@@ -1,11 +1,12 @@
-import { Component, OnInit, Output, EventEmitter} from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import {Set} from '../sets';
+import {FirestoreService} from '../services/firestore/firestore.service';
+import { Subscription, Observable } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import {  } from 'firebase/storage';
+import {AngularFireStorage} from '@angular/fire/storage';
 
-
-
-interface MyObj {
-  Hola: string;
-}
 
 @Component({
   selector: 'app-set-selector',
@@ -13,15 +14,24 @@ interface MyObj {
   styleUrls: ['./set-selector.component.scss']
 })
 
+
+
 export class SetSelectorComponent implements OnInit {
-  
   
   //Matriz para el tablero
   public Sets:Array<any>;
 
-  @Output() set_seleccionado = new EventEmitter();
+  public setfb:Set[];
+  public s_sets:Subscription;
 
-  constructor(public router: Router, public route: ActivatedRoute) {
+  public ref:any;
+  
+  public obsurl: Observable<string | null>;
+  public url:string;
+
+  constructor(public router: Router, public route: ActivatedRoute, 
+    private firestoreService: FirestoreService,private _snackBar: MatSnackBar, private storage:AngularFireStorage
+    ) {
 
     this.Sets=[
       {
@@ -35,13 +45,23 @@ export class SetSelectorComponent implements OnInit {
        {
          "route": 'assets/sets/2.png',
          "id": 2
-        }
-
+       }
       ];
 
+      const ref = this.storage.ref('sets/set0/1.svg');
+      this.obsurl = ref.getDownloadURL();
+
+      const obssubs=this.obsurl.subscribe(char=>{
+        this.url=char;
+        console.log(this.url);
+      })
+      
   }
 
   ngOnInit(): void {
+    this.s_sets=this.firestoreService.getSets().subscribe(data=>{
+      this.setfb=data;
+    });
   }
 
   select(id:Number){

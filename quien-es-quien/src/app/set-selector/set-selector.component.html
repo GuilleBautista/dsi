@@ -4,8 +4,11 @@
 <!-- Tablero -->
 <div class="table">
   
-      <img *ngFor="let set of Sets;" class="set" src={{set.route}} alt="set {{set.id}}" (click)="select(set.id)" >
+      <img *ngFor="let set of setfb;" class="set" src={{set.path}} alt="set {{set.id}}" (click)="select(set.path)" >
       <br>
+
+      <img src={{url}} class="sets">
+      {{url}}
 
   </div>
 
