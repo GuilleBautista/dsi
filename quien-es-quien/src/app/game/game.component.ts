@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 export class GameComponent implements OnInit {
 
   //Matriz para el tablero
-  public matrix:Array<Array<number>>;
+  public matrix:Array<Array<any>>;
   public set:Number;
 
   constructor() {
@@ -19,6 +19,11 @@ export class GameComponent implements OnInit {
     for(let i=0; i<4; i++){
       this.matrix.push( [] ) ;
       for(let j=0; j<6; j++){
+
+        let npc={
+          "src":""
+        }
+
         this.matrix[i].push(0);
       }
     }

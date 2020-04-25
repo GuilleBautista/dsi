@@ -1,10 +1,7 @@
 import { Component, OnInit} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import {Set} from '../sets';
 import {FirestoreService} from '../services/firestore/firestore.service';
-import { Subscription, Observable } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {  } from 'firebase/storage';
 import {AngularFireStorage} from '@angular/fire/storage';
 
 
@@ -28,33 +25,30 @@ export class SetSelectorComponent implements OnInit {
     private firestoreService: FirestoreService,private _snackBar: MatSnackBar, private storage:AngularFireStorage
     ) {
 
-    const ref = this.storage.ref('sets/1.png');
-    const obsurl = ref.getDownloadURL();
+    this.Sets=[];
 
+    for(let i=0; i<3; i++){
+      let ref = this.storage.ref('sets/'+i+'.png');
+      let obsurl = ref.getDownloadURL();
+      obsurl.subscribe(char=>{
+        this.url=char;
+      })
 
-    obsurl.subscribe(char=>{
-      this.url=char;
-    })
+      let set={
+        "route":"",
+        "id" : i
+      }
 
-    this.Sets=[
-      {
-        "route": "",
-        "id": "/characters/set0"
-       },
-       {
-        "route": 'assets/sets/1.png (copy)', 
-        "id": "/characters/set1"
-       },
-       {
-         "route": 'assets/sets/2.png',
-         "id": "/characters/set2"
-       }
-      ];
+      this.Sets.push(set);
 
       obsurl.subscribe(char=>{
         this.url=char;
-        this.Sets[0].route=this.url;
+        this.Sets[i].route=this.url;
       })
+
+    }
+
+     
       
      
   }
