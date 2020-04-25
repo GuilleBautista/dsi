@@ -1,6 +1,13 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 
+
+import { Router, ActivatedRoute } from '@angular/router';
+import { User } from '../user';
+import { FirestoreService } from '../services/firestore/firestore.service'
+import { Subscription } from 'rxjs';
+
+
 //Interfaz del dialog
 export interface DialogData {
   username: string;
@@ -66,6 +73,9 @@ export class loginDialog {
 }
 
 
+
+
+
 //Componente auxiliar para register
 @Component({
   selector: 'app-homepage-register',
@@ -74,16 +84,63 @@ export class loginDialog {
 })
 
 //Clase del popup del register
-export class registerDialog {
+export class registerDialog implements OnInit {
   hide = true;   //Para que la contraseña no se vea
 
   public passwordR : string; //Variable pública para el input de repetir contraseña
 
-  constructor(
-    public dialogRef: MatDialogRef<registerDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
+
+
+  //Usuario
+  public user: User;
+
+  public s_users: Subscription;
+
+  public users: User[];
+
+
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<registerDialog>, @Inject(MAT_DIALOG_DATA) public data: DialogData, private firestoreService: FirestoreService,
+              private router: Router, private route: ActivatedRoute)
+  {
+      this.user=new User();
+      this.users=[];
+  }
+
+  ngOnInit(){
+      this.s_users = this.firestoreService.getUsers().subscribe(data=>{
+        this.users = data;
+      });
+    }
+
+    ngOnDestroy(){registerDialog
+      this.s_users.unsubscribe();
+    }
+
+
 
   onNoClick(): void {
     this.dialogRef.close();
+    console.log(this.users);
+
   }
+
+  public finish()
+{
+
+  //if(this.user.name )
+
+
+  this.user.name = this.data.name;
+  this.user.password = this.data.password;
+  // if(this.contacto.id!=undefined)
+  //   this.firestoreService.updateContacto(this.contacto);
+  // else
+  this.firestoreService.createUser(this.user);
+  this.onNoClick();
+  //this.router.navigate(['list/']);
+}
+
+
+
 }
