@@ -7,6 +7,7 @@ import { PrincipalPageComponent } from './principal-page/principal-page.componen
 import { GameComponent } from './game/game.component';
 import { SetSelectorComponent } from './set-selector/set-selector.component';
 import { ProfileComponent } from './profile/profile.component';
+import { RankingComponent } from './ranking/ranking.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 //Rutas de los componentes
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: 'game', component: GameComponent },
   { path: 'set-selector', component: SetSelectorComponent,  },
   { path: 'profile', component: ProfileComponent },
+  { path: 'ranking', component: RankingComponent },
   { path: "**", component: PageNotFoundComponent }  //Para que cuando la ruta sea desconocida se vaya a la página de no encontrado
 ];
 
@@ -26,4 +28,4 @@ const routes: Routes = [
 export class AppRoutingModule { }
 
 //Constante para guardar todos los componentes que hemos importado solo aquí, así solo tenemos que importar roitingComponents en app.module.ts
-export const routingComponents = [HomepageComponent, loginDialog, registerDialog, PrincipalPageComponent, GameComponent, ProfileComponent, PageNotFoundComponent]
+export const routingComponents = [HomepageComponent, loginDialog, registerDialog, PrincipalPageComponent, GameComponent, ProfileComponent, RankingComponent, PageNotFoundComponent]

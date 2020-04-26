@@ -46,6 +46,10 @@ import { FooterComponent } from './footer/footer.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SetSelectorComponent } from './set-selector/set-selector.component';
 
+//Cosas firebase
+import { AngularFireModule } from '@angular/fire';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { environment } from '../environments/environment';
 
 
 @NgModule({
@@ -54,7 +58,7 @@ import { SetSelectorComponent } from './set-selector/set-selector.component';
     HeaderComponent,
     FooterComponent,
     routingComponents,
-    SetSelectorComponent,
+    SetSelectorComponent
   ],
   imports: [
     FormsModule,
@@ -95,7 +99,12 @@ import { SetSelectorComponent } from './set-selector/set-selector.component';
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
-    MatTreeModule
+    MatTreeModule,
+
+    //Cosas firebase 
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFirestoreModule
+
   ],
   providers: [],
   bootstrap: [AppComponent]

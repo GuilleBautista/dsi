@@ -1,11 +1,8 @@
 import { Component, OnInit} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import {FirestoreService} from '../services/firestore/firestore.service';
 
 
-
-interface MyObj {
-  Hola: string;
-}
 
 @Component({
   selector: 'app-set-selector',
@@ -13,36 +10,35 @@ interface MyObj {
   styleUrls: ['./set-selector.component.scss']
 })
 
+
+
 export class SetSelectorComponent implements OnInit {
-  
   
   //Matriz para el tablero
   public Sets:Array<any>;
+  
+  
+  constructor(public router: Router, public route: ActivatedRoute, private fs: FirestoreService) {
 
-  constructor(public router: Router, public route: ActivatedRoute) {
-
-    this.Sets=[
-      {
-        "route": 'assets/sets/1.png',
-        "id": 0
-       },
-       {
-        "route": 'assets/sets/1.png (copy)', 
-        "id": 1
-       },
-       {
-         "route": 'assets/sets/2.png',
-         "id": 2
-        }
-
-      ];
-
+    this.Sets=[];
+     
   }
 
   ngOnInit(): void {
+    for(let i=0; i<3; i++){
+      
+      this.fs.getImg("sets/"+i+".png").subscribe(url=>{
+        let set={
+          "route":url,
+          "id" : i
+        }
+        this.Sets.push(set);
+      })
+
+    }
   }
 
-  select(id:Number){
+  select(id:string){
     this.router.navigate(['/game'],     // En URL y participan en el routing.
     //{param_extra1:'XXX',param_extra2:57}],  // Se pasan codificados en la url.
     { state: { param_not_in_url: id }}   // No se muestran en la URL

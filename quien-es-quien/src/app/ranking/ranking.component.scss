@@ -1,0 +1,87 @@
+.wallpaperP{
+  background-image: url('/assets/img/fondo.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rank{
+  width: 60%;
+  height: 80%;
+  position: relative;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  cursor: default;
+}
+
+.photoTrophy{
+  width: 8%;
+  height: auto;
+  top: 0;
+  margin-top: 2%;
+  position: absolute;
+}
+
+.trophy{
+  width: 100%;
+  height: auto;
+}
+
+.titleRanking{
+  font-weight: bold;
+  font-size: 30px;
+  position: absolute;
+  top: 0;
+  margin-top: 12%;
+}
+
+.divUser{
+  width: 60%;
+  height: 10%;
+  top: -20%;
+  background-color: white;
+  border: 3px solid black;
+  display: inline;
+  position: relative;
+}
+
+.divUserPhotoRank{
+  width: 15%;
+  height: auto;
+  margin: 2%;
+  position: absolute;
+  left: 0;
+}
+
+.userPhotoRanking{
+  width: 50%;
+  height: auto;
+}
+
+.usernameRanking{
+  font-size: 15px;
+  position: absolute;
+  top: 35%;
+  left: 18%;
+}
+
+.levelRanking{
+  font-size: 15px;
+  font-weight: bold;
+  position: absolute;
+  top: 35%;
+  left: 50%;
+}
+
+.pointsRanking{
+  font-size: 15px;
+  position: absolute;
+  top: 35%;
+  left: 75%;
+}

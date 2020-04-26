@@ -11,7 +11,79 @@
 }
 
 .card{
-  width: 850px;
-  height: 600px;
+  width: 50%;
+  height: 60%;
   background-color: white;
+  border: 3px solid black;
+  display: inline;
+  position: relative;
+  cursor: default;
+
+}
+
+.titleProfile{
+  float: right;
+  font-weight: bold;
+  margin-right: 0%;
+  width: 70%;
+  text-align: center;
+  line-height: 60px;
+
+}
+
+.usernameProfile{
+  @extend .titleProfile;
+  margin-top: 5%;
+  font-size: 50px;
+}
+
+.levelProfile{
+  @extend .titleProfile;
+  font-size: 40px;
+}
+
+.divLevel{
+  margin-right: 10%;
+  text-align: center;
+  float: right;
+  width: 51%;
+}
+
+.levelBar{
+  height: 20px;
+  width: 50%;
+  left: 25%;
+  position: relative;
+}
+
+.pointsProfile{
+  @extend .titleProfile;
+  font-size: 15px;
+  width: 50%;
+  height: 10%;
+  position: relative;
+  right: 25%;
+}
+
+.photoProfile{
+  width: 25%;
+  height: auto;
+  margin: 2%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.userPhotoProfile{
+  width: 100%;
+  height: auto;
+  border: 2px solid black;
+}
+
+.rankingLink{
+  float: right;
+  margin-right: 0%;
+  width: 20%;
+  text-align: right;
+  cursor: pointer;
 }
