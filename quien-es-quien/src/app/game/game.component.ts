@@ -53,7 +53,7 @@ export class GameComponent implements OnInit {
     this.fs.getImages("/characters/set"+this.set).subscribe(
       result=>{
         //Cogemos todos los elementos de dentro
-        for(let pic of result.items){
+        for(let pic of result.items){ //items para archivos, prefixes para carpetas
           pic.getDownloadURL().then(url=>{
             //Asignamos a cada elemento de la matriz la url de uno de estos elementos
             this.matrix[i][j].url=url;
