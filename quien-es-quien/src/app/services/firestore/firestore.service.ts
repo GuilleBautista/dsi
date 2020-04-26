@@ -31,37 +31,12 @@ export class FirestoreService {
 
   public getImg(img:string):Observable<string>{
     let ref = this.storage.ref(img);
-    console.log(img);
     
     return ref.getDownloadURL();
     
   }
 
-  public getFiles(path:string){
-    let result=[]
-
-    var storageRef = firebase.storage().ref("characters/set0");
-
-
-    // Now we get the references of these images
-    storageRef.listAll().then(function(result) {
-      result.items.forEach(function(imageRef) {
-        // And finally display them
-        displayImage(imageRef);
-      });
-    }).catch(function(error) {
-      // Handle any errors
-    });
-
-    function displayImage(imageRef) {
-      imageRef.getDownloadURL().then(function(url) {
-        result.push(url);
-      }).catch(function(error) {
-        // Handle any errors
-      });
-    }
-    return result
-  }
+  
 
 }  
 

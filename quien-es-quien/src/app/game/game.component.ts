@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FirestoreService } from '../services/firestore/firestore.service';
+import { firestore } from 'firebase';
 
 @Component({
   selector: 'app-game',
@@ -11,7 +12,6 @@ export class GameComponent implements OnInit {
   //Matriz para el tablero
   public matrix:Array<Array<any>>;
   public set:Number=0;
-  public npc_list:string[];
 
   constructor(private fs: FirestoreService) {
     if(history.state.param_not_in_url != undefined){
@@ -19,53 +19,40 @@ export class GameComponent implements OnInit {
     }
     this.matrix=[];
 
-    this.npc_list=fs.getFiles('characters/set0');
-    console.log(this.npc_list)
-       
-    //Para rellenar la matriz
-    
     for(let i=0; i<4; i++){
+      //Añadimos una nueva fila a la matriz
       this.matrix.push( [] ) ;
       for(let j=0; j<6; j++){
-        console.log(this.npc_list[i+j*4])
+        this.fs.getImg("/characters/set"+this.set+"/"+(1+i+j*4)+".svg").subscribe(url=>{
+          //Creamos una estructura npc con la url correspondiente
+          let npc={
+            "url": url,
+            "state":0
+          }
+          //La añadimos a la matriz
+          this.matrix[i].push(npc);
+         })
+       
 
-        let npc={
-          "url":this.npc_list[i+j*4],
-          "state":0
-        }
-        this.matrix[i].push(npc);
+        
       }
     }
-    
-    
 
+    //Para rellenar la matriz
     
    }
 
   ngOnInit(): void {
-  
-      /*for(let i=0; i<4; i++){
-        this.matrix.push( [] ) ;
-      
-        for(let j=0; j<6; j++){
+    //Cogemos las imagenes de la base de datos
+    // for(let i=0; i<4; i++){
+    //   for(let j=0; j<6; j++){
+    //     this.fs.getImg("/characters/set"+this.set+"/"+(1+i+j*4)+".svg").subscribe(url=>{
+    //      this.matrix[i][j].url=url;
+    //      console.log(this.matrix[i][j].url)
+    //     })
         
-        console.log(this.npc_list[i+j*4]);    
-
-        this.fs.getImg(this.npc_list[i+j*4]).subscribe(url=>{
-            
-          let npc={
-            "src": url,
-            "state":0
-          }
-
-          this.matrix[i].push(npc);
-        })
-
-        
-      }
-    
-    }*/
-
+    //   }
+    // }
   }
 
 

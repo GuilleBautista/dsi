@@ -3,8 +3,9 @@
 
 <!-- Tablero -->
 <div class="table">
+
   <ng-container *ngFor="let row of matrix;" >
-    <img *ngFor="let npc of row;" class= "characterPic" src="{{npc.src}}">
+    <img *ngFor="let npc of row;" class= "characterPic" src="{{npc.url}}">
     <br>
   </ng-container>
 </div>
