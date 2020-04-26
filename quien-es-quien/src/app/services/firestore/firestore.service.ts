@@ -40,9 +40,6 @@ export class FirestoreService {
 
   public createUser(data: User):Promise<string>
   {
-    //return this.firestore.collection<IContacto>('contactos').add({... data}).then(r=>{
-    //  return r.id;});
-
     data.id=this.firestore.createId();
     return this.afsU.doc(data.id).set({... data}).then(r=>{
       return data.id;
@@ -54,8 +51,6 @@ export class FirestoreService {
   public getUser(id: string):Promise<User>
   {
     return this.afsU.doc(id).get().toPromise().then(r=>{
-      //Si quisieras forzar que se ejecute constructor de Contacto:
-      //return new Contacto(r.data() as IContacto);
       return r.data() as User;
     });
 

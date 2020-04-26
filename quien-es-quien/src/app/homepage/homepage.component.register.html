@@ -9,13 +9,18 @@
   <input matInput placeholder="Introduce un nombre" [(ngModel)]="data.name" required>
 </mat-form-field>
 
+
 <!-- Nombre de usuario -->
 <mat-form-field class="inputNameuser">
   <!-- Guardamos su valor en data.username -->
-  <input matInput placeholder="Introduce un nombre de usuario" [(ngModel)]="data.username">  <!-- VOLVER A PONER REQUIRED -->
+  <input matInput placeholder="Introduce un nombre de usuario" [(ngModel)]="data.username" required>
 </mat-form-field>
 <!-- Comprobamos que tiene un mínimo de 5 letras y sino sale un error -->
 <mat-error *ngIf="data.username != undefined && data.username.length<5">Mínimo 5 letras</mat-error>
+
+<!-- Comprobamos que no existe en la base de datos un usuario con el mismo nombre de usuario y sino sale un error -->
+<mat-error *ngIf="eUser == true">Ya existe un usuario con ese nombre de usuario</mat-error>
+
 
 <!-- Contraseña -->
 <div>
@@ -47,12 +52,7 @@
 
 <!-- Botón Finalizar -->
 <div class="centerRegister">
-  <!-- Para que no lo podamos pulsar hasta que no hayamos rellenado todos los campos hacemos todas las comparaciones, VOLVER A PONER LA CONDICIÓN || data.username == undefined || data.username ==''-->
-  <!-- <button type="submit" [disabled]="data.name == undefined || data.name =='' || data.password == undefined || data.password =='' || passwordR == undefined || passwordR =='' || passwordR != data.password" class="buttonR" mat-raised-button color="primary" routerLink="/principalpage" (click)='onNoClick()'>Finalizar</button> -->
-
-  <button [disabled]="data.name == undefined || data.name =='' || data.password == undefined || data.password =='' || passwordR == undefined || passwordR =='' || passwordR != data.password" class="buttonR" mat-raised-button color="primary" routerLink="/principalpage" (click)="finish()">Finalizar</button>
-
-
-
+  <!-- Para que no lo podamos pulsar hasta que no hayamos rellenado todos los campos hacemos todas las comparaciones-->
+  <button [disabled]="data.name == undefined || data.name =='' || data.username == undefined || data.username =='' || data.password == undefined || data.password =='' || passwordR == undefined || passwordR =='' || passwordR != data.password" class="buttonR" mat-raised-button color="primary" (click)='finish()'>Finalizar</button>
 
 </div>

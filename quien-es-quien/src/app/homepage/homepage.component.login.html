@@ -7,6 +7,7 @@
   <input matInput placeholder="Nombre de usuario" [(ngModel)]="data.username" required>
 </mat-form-field>
 
+
 <!-- Input Contraseña -->
 <div>
   <mat-form-field appearance="fill" class="inputPassword">
@@ -19,8 +20,16 @@
   </mat-form-field>
 </div>
 
+<!-- Comprobamos que existe en la base de datos un usuario con el mismo nombre y contraseña y sino sale un error -->
+<mat-error *ngIf="userR == false">El nombre o contraseña son incorrectos</mat-error>
+
+
+
 <!-- Botón Iniciar -->
 <div class="centerLogin">
+
   <!-- Para que no lo podamos pulsar hasta que no hayamos rellenado todos los campos hacemos todas las comparaciones -->
-  <button type="submit" [disabled]="data.username == undefined || data.username =='' || data.password == undefined || data.password ==''" class="buttonI" mat-raised-button color="primary" routerLink="/principalpage" (click)='onNoClick()'>Iniciar</button>
+  <button [disabled]="data.username == undefined || data.username =='' || data.password == undefined || data.password ==''" class="buttonI" mat-raised-button color="primary" (click)='start(data.username)'>Iniciar</button>
+
+
 </div>

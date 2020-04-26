@@ -9,12 +9,12 @@
   <!-- Para navegar a la página de inicio ponemos routerLink="" -->
   <h1 class="nameHeader" routerLink="">¿Quién es Quién?</h1>
 
-  <p class="levelHeader">NIVEL X</p>
+  <p class="levelHeader">NIVEL {{level}}</p>
 
   <div class= "divProfileHeader">
     <img class="userPhoto" src="assets/img/profilePhotoEx.jpeg" routerLink="/profile">
     <!-- Para navegar a la página del perfil ponemos routerLink="/profile" -->
-    <p class="usernameHeader" routerLink="/profile">Nombre</p>
+    <p class="usernameHeader" routerLink="/profile">{{username}}</p>
   </div>
 
 </mat-toolbar>

@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { FirestoreService } from '../services/firestore/firestore.service';
+import { User } from '../user';
+
 
 @Component({
   selector: 'app-ranking',
@@ -7,9 +10,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RankingComponent implements OnInit {
 
-  constructor() { }
+  public users: User[];
+
+  constructor(private fs: FirestoreService) {
+
+    //this.users = fs.getUsers();
+    console.log(fs.getUsers());
+
+   }
 
   ngOnInit(): void {
   }
+
 
 }
