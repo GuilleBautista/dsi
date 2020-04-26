@@ -13,6 +13,8 @@ export class GameComponent implements OnInit {
   public matrix:Array<Array<any>>;
   public set:Number=0;
 
+  public url="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.7mzsZ50AoKVC2VYcA63mqQHaE8%26pid%3DApi&f=1"  
+
   constructor(private fs: FirestoreService) {
     if(history.state.param_not_in_url != undefined){
       this.set=history.state.param_not_in_url;
@@ -62,6 +64,16 @@ export class GameComponent implements OnInit {
           });
         }
       })
+  }
+
+  public update(i:number, j:number){
+    if(this.matrix[i][j].state==0){      
+      this.matrix[i][j].state=1;    
+    }
+    else{
+      this.matrix[i][j].state=0;
+    }
+
   }
 
 }
