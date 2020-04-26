@@ -17,43 +17,51 @@ export class GameComponent implements OnInit {
     if(history.state.param_not_in_url != undefined){
       this.set=history.state.param_not_in_url;
     }
+    
+    //Inicializamos una matriz de personajes
     this.matrix=[];
-
     for(let i=0; i<4; i++){
-      //Añadimos una nueva fila a la matriz
-      this.matrix.push( [] ) ;
+      this.matrix.push([]);
       for(let j=0; j<6; j++){
-        this.fs.getImg("/characters/set"+this.set+"/"+(1+i+j*4)+".svg").subscribe(url=>{
-          //Creamos una estructura npc con la url correspondiente
-          let npc={
-            "url": url,
-            "state":0
-          }
-          //La añadimos a la matriz
-          this.matrix[i].push(npc);
-         })
        
+        let npc={
+          "url": "",
+          "state":0
+        };
 
-        
+        this.matrix[i].push(npc);         
       }
     }
 
-    //Para rellenar la matriz
-    
    }
 
   ngOnInit(): void {
-    //Cogemos las imagenes de la base de datos
-    // for(let i=0; i<4; i++){
-    //   for(let j=0; j<6; j++){
-    //     this.fs.getImg("/characters/set"+this.set+"/"+(1+i+j*4)+".svg").subscribe(url=>{
-    //      this.matrix[i][j].url=url;
-    //      console.log(this.matrix[i][j].url)
-    //     })
+
+    this.initializeMatrix();
         
-    //   }
-    // }
   }
 
+  /*
+  Funcion para dar valor a las imagenes de los personajes de la matriz.
+  Esta funcion asume que los unicos elementos que hay en la carpeta del set a acceder son las imagenes del set en cuestion.
+  */
+  private initializeMatrix(){
+    //Cogemos las imagenes de la base de datos
+    let i=0, j=0;
+
+    //Accedemos a la carpeta del set correspondiente
+    this.fs.getImages("/characters/set"+this.set).subscribe(
+      result=>{
+        //Cogemos todos los elementos de dentro
+        for(let pic of result.items){
+          pic.getDownloadURL().then(url=>{
+            //Asignamos a cada elemento de la matriz la url de uno de estos elementos
+            this.matrix[i][j].url=url;
+            i+=1;
+            if(i>=4){ i=0; j+=1; }
+          });
+        }
+      })
+  }
 
 }
