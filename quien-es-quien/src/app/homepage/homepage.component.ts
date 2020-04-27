@@ -109,7 +109,7 @@ export class loginDialog implements OnInit{
 
 
   //Función para que un usuario registrado inicie sesión
-  public start(username:string){
+  public start(){
     this.userR = false;
   //Comprobamos que hay un usuario con el mismo nombre y contraseña en la BD
     for (let i = 0; i < this.users.length; i++) {
@@ -165,7 +165,7 @@ export class registerDialog implements OnInit {
 
   //Constructor
   constructor(public dialogRef: MatDialogRef<registerDialog>, @Inject(MAT_DIALOG_DATA) public data: DialogData, private firestoreService: FirestoreService,
-              private router: Router, private route: ActivatedRoute)
+              private router: Router, private route: ActivatedRoute, public global: GlobalService)
   {
       this.user=new User("", "", "", 0, 0);
       this.users=[];
@@ -209,8 +209,9 @@ export class registerDialog implements OnInit {
       this.user.points = 0;
 
       this.firestoreService.createUser(this.user);
+      this.global.actualUser = this.user;
       this.onNoClick();
-      this.router.navigate(["/principalpage"]);
+      this.router.navigate(["/profile"]);
     }
 
   }

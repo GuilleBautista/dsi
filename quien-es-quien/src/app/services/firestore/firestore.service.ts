@@ -63,6 +63,17 @@ export class FirestoreService {
   }
 
 
+  public updateUser(data:User){
+    return this.afsU.doc(data.id).set(data);
+  }
+
+
+  public getOrderedUsers():Observable<User[]>{
+
+    return this.firestore.collection<User>('usuarios',ref=>ref.orderBy('points', 'desc')).valueChanges();
+
+  }
+
 
 
 
