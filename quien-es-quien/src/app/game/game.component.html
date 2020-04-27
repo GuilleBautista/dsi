@@ -7,7 +7,7 @@
   <ng-container *ngFor="let row of matrix; index as i" >
     <ng-container *ngFor="let npc of row; index as j">
       <!-- X immage -->
-      <img *ngIf="matrix[i][j].state==1" class= "x" src="{{url}}" (click)='update(i, j);'>
+      <img *ngIf="matrix[i][j].state==1" class= "x" src="{{x_picture}}" (click)='update(i, j);'>
       
       <!-- Character image -->
       <img  class= "characterPic" src="{{npc.url}}" (click)='update(i, j);'>

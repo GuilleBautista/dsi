@@ -36,7 +36,7 @@ export class FirestoreService {
     
   }
 
-  public getImages(path:string){
+  public getFiles(path:string){
 
     let ref=this.storage.ref(path);
 

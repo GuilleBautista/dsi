@@ -12,8 +12,7 @@ export class GameComponent implements OnInit {
   //Matriz para el tablero
   public matrix:Array<Array<any>>;
   public set:Number=0;
-
-  public url="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.7mzsZ50AoKVC2VYcA63mqQHaE8%26pid%3DApi&f=1"  
+  public x_picture:string="";
 
   constructor(private fs: FirestoreService) {
     if(history.state.param_not_in_url != undefined){
@@ -35,6 +34,10 @@ export class GameComponent implements OnInit {
       }
     }
 
+    this.fs.getImg("img/x.svg").subscribe(url=>{
+      this.x_picture=url;
+    });
+
    }
 
   ngOnInit(): void {
@@ -52,11 +55,11 @@ export class GameComponent implements OnInit {
     let i=0, j=0;
 
     //Accedemos a la carpeta del set correspondiente
-    this.fs.getImages("/characters/set"+this.set).subscribe(
+    this.fs.getFiles("/characters/set"+this.set).subscribe(
       result=>{
         //Cogemos todos los elementos de dentro
-        for(let pic of result.items){ //items para archivos, prefixes para carpetas
-          pic.getDownloadURL().then(url=>{
+        for(let file of result.items){ //items para archivos, prefixes para carpetas
+          file.getDownloadURL().then(url=>{
             //Asignamos a cada elemento de la matriz la url de uno de estos elementos
             this.matrix[i][j].url=url;
             i+=1;
