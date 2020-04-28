@@ -1,10 +1,3 @@
-.centerRegister{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
 .titleRegister{
   font-size: 30px;
   display: flex;
@@ -28,6 +21,13 @@
 .inputPassword{
   width: 330px;
   font-size: 20px;
+}
+
+.centerRegister{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .buttonR{

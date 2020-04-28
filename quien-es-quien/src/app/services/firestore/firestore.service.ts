@@ -64,7 +64,7 @@ export class FirestoreService {
 
 
   public updateUser(data:User){
-    return this.afsU.doc(data.id).set(data);
+    return this.afsU.doc(data.id).set(Object.assign({}, data));
   }
 
 

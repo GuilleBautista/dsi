@@ -1,2 +1,70 @@
 <!-- Popup Editar Perfil -->
 <h2 class="titleProfile">Editar Perfil</h2>
+<br>
+
+<!-- Nombre -->
+<div class="divInline">
+  <p class="labelsEdit"><strong>Nombre actual:</strong> {{name}} </p>
+
+  <mat-form-field class="inputNewName">
+    <!-- Guardamos su valor en data.newName -->
+    <input matInput placeholder="Nuevo nombre" [(ngModel)]="data.newName">
+  </mat-form-field>
+</div>
+
+<br>
+
+<!-- Nombre usuario -->
+<div class="divInline">
+  <p class="labelsEdit"><strong>Nombre de usuario actual:</strong> {{username}} </p>
+
+  <mat-form-field class="inputNewUsername">
+    <!-- Guardamos su valor en data.newUsername -->
+    <input matInput placeholder="Nuevo nombre de usuario" [(ngModel)]="data.newUsername">
+  </mat-form-field>
+</div>
+
+<!-- Comprobamos que tiene un mínimo de 5 letras y sino sale un error -->
+<mat-error class="errorNU" *ngIf="data.newUsername != undefined && data.newUsername.length<5">Mínimo 5 letras</mat-error>
+
+<!-- Comprobamos que no existe en la base de datos un usuario con el mismo nombre de usuario y sino sale un error -->
+<mat-error class="errorNU" *ngIf="alreadyUser == true">Ya existe un usuario con ese nombre de usuario</mat-error>
+
+<br>
+
+<!-- Contraseña -->
+<div class="divInline">
+  <p class="labelsEdit"><strong>Contraseña actual:</strong> {{password}} </p>
+
+  <mat-form-field class="inputNewPassword">
+    <!-- Guardamos su valor en data.newPassword -->
+    <input matInput placeholder="Nueva contraseña" [(ngModel)]="data.newPassword">
+  </mat-form-field>
+</div>
+
+<!-- Comprobamos que tiene un mínimo de 6 letras y sino sale un error -->
+<mat-error class="errorNC" *ngIf="data.newPassword != undefined && data.newPassword.length<6">Mínimo 6 letras</mat-error>
+
+<br>
+
+
+<div class="divInline">
+  <p class="labelsEdit"><strong>Cambiar foto de perfil:</strong> </p>
+
+  <input type="file" class="inputPic" (change)="onFileChanged($event)">
+
+  <button class="buttonS" mat-raised-button (click)='uploadPhoto()'>Subir</button>
+
+</div>
+
+<br>
+
+<br>
+
+<br>
+
+<!-- Botón Guardar -->
+<div class="centerEdit">
+  <button class="buttonG" mat-raised-button color="primary" (click)='save()'>Guardar</button>
+
+</div>
