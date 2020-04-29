@@ -4,7 +4,7 @@
 <!-- Imagen fondo de pantalla -->
 <div class="wallpaperP">
 
-  <div class="rank">
+  <div class="rank" *ngIf="loaded">
 
     <div class= "photoTrophy">
       <img class="trophy"src="assets/img/goal.svg">
@@ -12,16 +12,26 @@
     <h2 class="titleRanking"> RANKING MEJORES JUGADORES </h2>
 
 
-    <div class="divUser">
-      <div class= "divUserPhotoRank">
-        <img class="userPhotoRanking"src="assets/img/profilePhotoEx.jpeg">
-      </div>
-      <p class="usernameRanking"> Nombre usuario </p>
-      <p class="levelRanking"> NIVEL X </p>
-      <p class="pointsRanking"> 100 puntos </p>
+    <div class="divUser" *ngFor="let i of users">
+
+        <div class= "divUserPhotoRank">
+          <img class="userPhotoRanking"src="assets/img/profilePhotoEx.jpeg">
+        </div>
+        <p class="usernameRanking"> {{i.username}} </p>
+        <p class="levelRanking"> NIVEL {{i.level}} </p>
+        <p class="pointsRanking"> {{i.points}} puntos </p>
+
 
     </div>
 
+
+
+
+  </div>
+
+
+  <div *ngIf="!loaded">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
 
 

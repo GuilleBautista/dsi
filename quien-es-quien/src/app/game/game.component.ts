@@ -18,19 +18,23 @@ export class GameComponent implements OnInit {
     if(history.state.param_not_in_url != undefined){
       this.set=history.state.param_not_in_url;
     }
-    
-    //Inicializamos una matriz de personajes
     this.matrix=[];
+
+    //this.npc_list=fs.getFiles('characters/set0');
+    console.log(this.npc_list)
+
+    //Para rellenar la matriz
+
     for(let i=0; i<4; i++){
       this.matrix.push([]);
       for(let j=0; j<6; j++){
-       
+
         let npc={
           "url": "",
           "state":0
         };
 
-        this.matrix[i].push(npc);         
+        this.matrix[i].push(npc);
       }
     }
 
@@ -43,7 +47,7 @@ export class GameComponent implements OnInit {
   ngOnInit(): void {
 
     this.initializeMatrix();
-        
+
   }
 
   /*
@@ -70,8 +74,8 @@ export class GameComponent implements OnInit {
   }
 
   public update(i:number, j:number){
-    if(this.matrix[i][j].state==0){      
-      this.matrix[i][j].state=1;    
+    if(this.matrix[i][j].state==0){
+      this.matrix[i][j].state=1;
     }
     else{
       this.matrix[i][j].state=0;

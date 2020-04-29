@@ -1,0 +1,66 @@
+.titleProfile{
+  font-size: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.labelsEdit{
+  font-size: 22px;
+  display: inline;
+  margin-left: 5%;
+}
+
+.divInline{
+  display: inline;
+}
+
+.inputNewName{
+  width: 250px;
+  height: 80px;
+  font-size: 20px;
+  margin-left: 6%;
+}
+
+.inputNewUsername{
+  width: 300px;
+  height: 80px;
+  font-size: 20px;
+  margin-left: 6%;
+}
+
+.inputNewPassword{
+  width: 250px;
+  height: 80px;
+  font-size: 20px;
+  margin-left: 6%;
+}
+
+.centerEdit{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.buttonG{
+  font-size: 18px;
+}
+
+.errorNU{
+  margin-left: 53%;
+}
+
+.errorNC{
+  margin-left: 46%;
+}
+
+.inputPic{
+  margin-left: 1%;
+}
+
+.buttonS{
+  font-size: 18px;
+  margin-left: 1%;
+}

@@ -9,12 +9,18 @@
   <!-- Para navegar a la página de inicio ponemos routerLink="" -->
   <h1 class="nameHeader" routerLink="">¿Quién es Quién?</h1>
 
-  <p class="levelHeader">NIVEL X</p>
+
+  <button class="buttonNG" mat-raised-button color='warn' routerLink="/principalpage">Nueva partida</button>
+
+  <button class="buttonRank" mat-raised-button color='warn' routerLink="/ranking">Ranking</button>
+
+
+  <p class="levelHeader">NIVEL {{level}}</p>
 
   <div class= "divProfileHeader">
-    <img class="userPhoto" src="assets/img/profilePhotoEx.jpeg" routerLink="/profile">
+    <img class="userPhoto" src="{{defaultProfilePicH}}" routerLink="/profile">
     <!-- Para navegar a la página del perfil ponemos routerLink="/profile" -->
-    <p class="usernameHeader" routerLink="/profile">Nombre</p>
+    <p class="usernameHeader" routerLink="/profile">{{username}}</p>
   </div>
 
 </mat-toolbar>

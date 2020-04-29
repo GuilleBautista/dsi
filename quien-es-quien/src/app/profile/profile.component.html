@@ -7,21 +7,20 @@
   <div class="card">
 
 
-    <h2 class="usernameProfile"> Nombre de usuario </h2>
+    <h2 class="usernameProfile"> {{username}} </h2>
 
-    <h2 class="levelProfile"> NIVEL X </h2>
+    <h2 class="levelProfile"> NIVEL {{level}}</h2>
 
     <div class= "photoProfile">
-      <img class="userPhotoProfile"src="assets/img/profilePhotoEx.jpeg">
+      <img class="userPhotoProfile"src="{{profilePic}}">
     </div>
 
     <div class="divLevel">
-      <mat-progress-bar class="levelBar" mode="determinate" value="80" color="warn"></mat-progress-bar>
-      <p class="pointsProfile"> 80 PUNTOS de 100 </p>
+      <mat-progress-bar class="levelBar" mode="determinate" value="{{points}}" color="warn"></mat-progress-bar>
+      <p class="pointsProfile"> {{points}} PUNTOS de 100 </p>
     </div>
 
-
-    <p class="rankingLink" routerLink="/ranking"> RANKING </p>
+    <button class="buttonE" mat-raised-button color="warn" (click)='edit()'>Editar</button>
 
   </div>
 
