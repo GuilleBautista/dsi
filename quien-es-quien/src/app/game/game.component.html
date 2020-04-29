@@ -1,16 +1,20 @@
 <!-- Header -->
 <app-header></app-header>
 
+<button *ngIf="selecting==false" (click)='toggleSelecting()'>SEND RESULT</button>
+<button *ngIf="selecting==true" (click)='toggleSelecting()'>CANCEL</button>
+
+
 <!-- Tablero -->
 <div class="table">
 
   <ng-container *ngFor="let row of matrix; index as i" >
     <ng-container *ngFor="let npc of row; index as j">
       <!-- X immage -->
-      <img *ngIf="matrix[i][j].state==1" class= "x" src="{{x_picture}}" (click)='update(i, j);'>
+      <img *ngIf="matrix[i][j].state==1" class= "x" src="{{x_picture}}" (click)='onClickNpc(i, j);'>
       
       <!-- Character image -->
-      <img  class= "characterPic" src="{{npc.url}}" (click)='update(i, j);'>
+      <img  class= "characterPic" src="{{npc.url}}" (click)='onClickNpc(i, j);'>
     
     </ng-container>
     <br>

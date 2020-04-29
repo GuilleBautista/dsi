@@ -11,17 +11,17 @@ export class NpcSelectorComponent implements OnInit {
 
   //Matriz para el tablero
   public matrix:Array<Array<any>>;
-  public set:Number=0;
+  public set:number=0;
   public x_picture:string="";
 
   constructor(private fs: FirestoreService, public router: Router, public route: ActivatedRoute) {
     //Comprobamos si se han pasado los datos por la url
     if(history.state.data == undefined){
-
-      //TODO: Hacer algo si no se han pasado los datos
-
+      //Si no recibimos datos vamos a la pagina principal
+      this.router.navigate(['/principalpage']);
     }
     else{
+      //Cogemos el set de la url
       this.set=history.state.data.set;
     }
     
@@ -48,14 +48,6 @@ export class NpcSelectorComponent implements OnInit {
    }
 
   ngOnInit(): void {
-
-    this.route.data.subscribe(data => {
-      console.log("logging data from npc: ",data);
-    });
-
-    console.log("logging state from npc: ", history.state);
-
-    console.log("logging route from npc: ", this.route);
 
     this.initializeMatrix();
         
@@ -85,21 +77,31 @@ export class NpcSelectorComponent implements OnInit {
   }
 
   /*
-  Funcion para seleccionar el npc con el que se creará la pagina de juego.
-  Esta función redirecciona automáticamente a la pagina de juego.
-  Recibe como argumento la url del personaje seleccionado y 
-    la reenvia a través de la URL de la pagina al componente del juego
+  Devuelve por la url:
+    data: estructura de datos que contiene=>
+    {
+      npc:string contiene la url de la imagen del personaje elegido, 
+      set:number contiene el set elegido anteriormente
+    }
+  Recibe:
+    url:string contiene la url de la imagen del personaje elegido. Viene del propio html.
+  
+  Descripción:
+    Funcion para seleccionar el npc con el que se creará la pagina de juego.
+    Esta función redirecciona automáticamente a la pagina de juego.
+    Recibe como argumento la url del personaje seleccionado y 
+      la reenvia a través de la URL de la pagina al componente del juego.
   */
-  public select(url:string){
+  public select(url:string){  
     //creamos una estructura de datos para pasar por la url
     let data={
-      npc: url,
-      set: this.set
+      npc: url, //npc:string contiene la url del personaje elegido, 
+      set: this.set //set:number contiene el set elegido anteriormente
       }
-    this.router.navigate(['/game'],     // En URL y participan en el routing.
-    //{param_extra1:'XXX',param_extra2:57}],  // Se pasan codificados en la url.
+    this.router.navigate(['/game'], 
       { 
-        state: { data: data }
+        state: { data: data }//Pasamos los datos por la url
+
       }   // No se muestran en la URL
     );
   }
