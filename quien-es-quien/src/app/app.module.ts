@@ -50,6 +50,7 @@ import { SetSelectorComponent } from './set-selector/set-selector.component';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { environment } from '../environments/environment';
+import { NpcSelectorComponent } from './npc-selector/npc-selector.component';
 
 
 @NgModule({
@@ -58,7 +59,8 @@ import { environment } from '../environments/environment';
     HeaderComponent,
     FooterComponent,
     routingComponents,
-    SetSelectorComponent
+    SetSelectorComponent,
+    NpcSelectorComponent
   ],
   imports: [
     FormsModule,
