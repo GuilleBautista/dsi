@@ -21,7 +21,6 @@ export class GameComponent implements OnInit {
     this.matrix=[];
 
     //this.npc_list=fs.getFiles('characters/set0');
-    console.log(this.npc_list)
 
     //Para rellenar la matriz
 
