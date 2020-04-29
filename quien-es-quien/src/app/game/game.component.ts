@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FirestoreService } from '../services/firestore/firestore.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import {debugging as debug} from '../global'
 
 @Component({
   selector: 'app-game',
@@ -12,18 +13,28 @@ export class GameComponent implements OnInit {
   //Matriz para el tablero
   public matrix:Array<Array<any>>;
   public set:Number=0;
-  public playerNpc:string="";
-  public x_picture:string="";
+  public playerNpc:string;
+  public x_picture:string;
+  public goal:string;
+  
   public selecting:boolean=false;
-  
+
+  public debug:boolean=debug;
+  public default:boolean=false;  
   //El objetivo por defecto es yasmin. TODO: conseguir el objetivo de una forma mejor
-  private goal:string="https://firebasestorage.googleapis.com/v0/b/quien-es-quien-d6954.appspot.com/o/characters%2Fset0%2F34.svg?alt=media&token=d428351a-96b4-4e98-bd01-3c880ad73460";
-  
+
   constructor(private fs: FirestoreService, public router: Router, public route: ActivatedRoute) {
-    //Comprobamos si se han pasado los parámetros por la url
-    if(history.state.data == undefined){
-      //Si no recibimos datos vamos a la pagina principal
-      this.router.navigate(['/principalpage']);
+    //Comprobamos si se han pasado los parámetros por la url.
+    if(history.state.data == undefined ){
+      //Si estamos debugeando aceptamos los valores por defecto.
+      if(!debug){
+        //Si no recibimos datos vamos a la pagina principal
+        this.router.navigate(['/principalpage']);
+      }
+      else{
+        this.default=true;
+      }
+      
     }
     else{
       this.set=history.state.data.set;//Cogemos el set de la url
@@ -49,20 +60,30 @@ export class GameComponent implements OnInit {
     this.fs.getImg("img/x.svg").subscribe(url=>{
       this.x_picture=url;
     });
+    
 
    }
 
   ngOnInit(): void {
-
-    this.initializeMatrix();
-        
+    
+    //If default flag is true we initialize the matrix with random player and goal
+    if(this.default ){
+      this.initializeMatrix(
+        this.selectRandomNpc(),
+        this.selectRandomNpc()
+      )
+    }else{
+      this.initializeMatrix();
+    }
   }
+
+  //----------------------------Funciones auxiliares---------------------------------------
 
   /*
   Funcion para dar valor a las imagenes de los personajes de la matriz.
   Esta funcion asume que los unicos elementos que hay en la carpeta del set a acceder son las imagenes del set en cuestion.
   */
-  private initializeMatrix(){
+  private initializeMatrix(player?:any, goal?:any){
     //Indices para recorrer la matriz
     let i=0, j=0;
 
@@ -74,13 +95,39 @@ export class GameComponent implements OnInit {
           file.getDownloadURL().then(url=>{
             //Asignamos a cada elemento de la matriz la url de uno de estos elementos
             this.matrix[i][j].url=url;
+            
+            if(this.default){
+              if(i==player.i && j==player.j){
+                this.playerNpc=url;
+              }
+              if(i==goal.i && j==goal.j){
+                this.goal=url;
+              }
+            }
+            
             i+=1;
             if(i>=4){ i=0; j+=1; }
+
           });
         }
       })
   }
+
+  private selectRandomNpc():any{
+    let i= Math.floor(Math.random()*4);
+    let j= Math.floor(Math.random()*6);
+    
+    let result={
+      i:i,
+      j:j
+    }
+
+    return result;
+  }
+
   
+  //----------------------------Interaccion con el tablero:--------------------------------
+
   /*
   Se ejecuta al hacer click sobre un personaje o una X.
   Recibe como argumentos la fila y la columna del mismo.
@@ -115,6 +162,8 @@ export class GameComponent implements OnInit {
   public toggleSelecting(){
     this.selecting=!this.selecting;
   }
+
+  //Funciones del juego
 
   //Funcion a ejecutar cuando acaba la partida
   private end(){

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FirestoreService } from '../services/firestore/firestore.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import {debugging as debug} from '../global'
+
 
 @Component({
   selector: 'app-npc-selector',
@@ -11,14 +13,21 @@ export class NpcSelectorComponent implements OnInit {
 
   //Matriz para el tablero
   public matrix:Array<Array<any>>;
-  public set:number=0;
-  public x_picture:string="";
+  public set:number;
+  public x_picture:string;
 
   constructor(private fs: FirestoreService, public router: Router, public route: ActivatedRoute) {
     //Comprobamos si se han pasado los datos por la url
     if(history.state.data == undefined){
-      //Si no recibimos datos vamos a la pagina principal
-      this.router.navigate(['/principalpage']);
+       //Si estamos debugeando aceptamos los valores por defecto.
+       if(!debug){
+        //Si no recibimos datos vamos a la pagina principal
+        this.router.navigate(['/principalpage']);
+      }
+      else{
+        //Default values
+        this.set=0;
+      }
     }
     else{
       //Cogemos el set de la url
