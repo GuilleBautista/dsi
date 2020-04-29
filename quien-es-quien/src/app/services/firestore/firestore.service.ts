@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
-
+import {IGameData, GameData} from '../../clases/gamedata';
 import { Observable } from 'rxjs';
-import { Iset,Set } from '../../sets';
+import { Iset,Set } from '../../clases/sets';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { ObserversModule } from '@angular/cdk/observers';
 import * as firebase from 'firebase';
@@ -15,13 +15,30 @@ import * as firebase from 'firebase';
 
 export class FirestoreService {
 
-  private afs:AngularFirestoreCollection<Set>;
+  private cookies_partidas:AngularFirestoreCollection<any>;
   
   constructor(private firestore: AngularFirestore, public storage:AngularFireStorage) {
 
-    this.afs=this.firestore.collection('sets');
+    this.cookies_partidas=this.firestore.collection('cookies_partidas');
 
   }
+
+  public getGameCookie(id:string):Promise<any>{
+    return this.cookies_partidas.doc(id).get().toPromise();
+  
+  }
+
+  public updateGameCookie(data:GameData){
+    return this.cookies_partidas.doc(data.id).set(Object.assign({}, data));
+  }
+
+
+
+
+
+
+
+
 
   public getSets():Observable<Set[]>
   {

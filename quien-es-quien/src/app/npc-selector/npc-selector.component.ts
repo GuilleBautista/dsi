@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FirestoreService } from '../services/firestore/firestore.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import {debugging as debug} from '../global'
+import {debugging as debug, width, height} from '../global'
 
 
 @Component({
@@ -26,7 +26,7 @@ export class NpcSelectorComponent implements OnInit {
       }
       else{
         //Default values
-        this.set=0;
+        this.set=Math.floor(Math.random()*3);
       }
     }
     else{
@@ -36,9 +36,9 @@ export class NpcSelectorComponent implements OnInit {
     
     //Inicializamos una matriz de personajes
     this.matrix=[];
-    for(let i=0; i<4; i++){
+    for(let i=0; i<height; i++){
       this.matrix.push([]);
-      for(let j=0; j<6; j++){
+      for(let j=0; j<width; j++){
        
         let npc={
           "url": "",

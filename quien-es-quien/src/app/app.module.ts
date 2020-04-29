@@ -51,6 +51,7 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { environment } from '../environments/environment';
 import { NpcSelectorComponent } from './npc-selector/npc-selector.component';
+import { CookieService } from 'ngx-cookie-service';
 
 
 @NgModule({
@@ -103,12 +104,13 @@ import { NpcSelectorComponent } from './npc-selector/npc-selector.component';
     MatTooltipModule,
     MatTreeModule,
 
+
     //Cosas firebase 
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule
 
   ],
-  providers: [],
+  providers: [CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

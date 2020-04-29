@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FirestoreService } from '../services/firestore/firestore.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import {debugging as debug} from '../global'
+import {debugging as debug, height, width} from '../global';
+import { CookieService } from 'ngx-cookie-service';
+import {IGameData, GameData} from '../clases/gamedata';
 
 @Component({
   selector: 'app-game',
@@ -15,7 +17,7 @@ export class GameComponent implements OnInit {
   public set:Number=0;
   public playerNpc:string;
   public x_picture:string;
-  public goal:string;
+  public goal:string="";
   
   public selecting:boolean=false;
 
@@ -23,29 +25,40 @@ export class GameComponent implements OnInit {
   public default:boolean=false;  
   //El objetivo por defecto es yasmin. TODO: conseguir el objetivo de una forma mejor
 
-  constructor(private fs: FirestoreService, public router: Router, public route: ActivatedRoute) {
-    //Comprobamos si se han pasado los parámetros por la url.
-    if(history.state.data == undefined ){
-      //Si estamos debugeando aceptamos los valores por defecto.
-      if(!debug){
-        //Si no recibimos datos vamos a la pagina principal
-        this.router.navigate(['/principalpage']);
-      }
-      else{
-        this.default=true;
-      }
-      
-    }
-    else{
+  constructor(private fs: FirestoreService, public router: Router, public route: ActivatedRoute, private cookieService: CookieService) {
+    
+    if(history.state.data != undefined ){
+      //Comprobamos si se han pasado los parámetros por la url.
+
       this.set=history.state.data.set;//Cogemos el set de la url
       this.playerNpc=history.state.data.npc;//Cogemos el personaje de la url
+      //Creamos una cookie TODO:generar los id de las cookies
+      this.setCookie();
     }
+    else{
+      if(this.cookieService.get('gameid')==""){
+        //Si estamos debugeando aceptamos los valores por defecto.
+        if(!debug){
+          //Si no recibimos datos vamos a la pagina principal
+          this.router.navigate(['/principalpage']);
+        }
+        else{
+          this.default=true;
+        }
+        
+      }
+      else{
+      this.getCookie();
+      }
+    }
+    
+   
     
     //Inicializamos una matriz de personajes
     this.matrix=[];
-    for(let i=0; i<4; i++){
+    for(let i=0; i<height; i++){
       this.matrix.push([]);
-      for(let j=0; j<6; j++){
+      for(let j=0; j<width; j++){
 
         //cada elemento de la matriz es un npc con url de imagen y estado
         let npc={
@@ -73,7 +86,7 @@ export class GameComponent implements OnInit {
         this.selectRandomNpc()
       )
     }else{
-      this.initializeMatrix();
+      this.initializeMatrix(this.selectRandomNpc());
     }
   }
 
@@ -114,8 +127,8 @@ export class GameComponent implements OnInit {
   }
 
   private selectRandomNpc():any{
-    let i= Math.floor(Math.random()*4);
-    let j= Math.floor(Math.random()*6);
+    let i= Math.floor(Math.random()*height);
+    let j= Math.floor(Math.random()*width);
     
     let result={
       i:i,
@@ -125,7 +138,36 @@ export class GameComponent implements OnInit {
     return result;
   }
 
+  private setCookie(){
+
+    let data={
+      id:"1",
+      set:this.set,
+      goal:this.goal,
+      npc:this.playerNpc
+
+    }
+
+    this.fs.updateGameCookie(data as GameData);
+
+    this.cookieService.set('gameid', data.id );
+    
+  }
   
+  private getCookie(){
+    let gamedata = this.fs.getGameCookie(
+      this.cookieService.get('gameid')
+      );
+
+    gamedata.then(result=>{
+      let gd = result.data() as GameData;
+
+      this.set=gd.set;
+      this.playerNpc=gd.npc;
+      this.goal=gd.goal;
+    })
+  }
+
   //----------------------------Interaccion con el tablero:--------------------------------
 
   /*
