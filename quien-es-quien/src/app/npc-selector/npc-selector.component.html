@@ -1,0 +1,24 @@
+<!-- Header -->
+<app-header></app-header>
+
+<p>SELECCIONA UN NPC O ALGO</p>
+
+<!-- Tablero -->
+<div class="table">
+
+  <ng-container *ngFor="let row of matrix;" >
+    <ng-container *ngFor="let npc of row;">
+      <!-- Character image -->
+      <img  class= "characterPic" src="{{npc.url}}" (click)='select(npc.url);'>
+    
+    </ng-container>
+    <br>
+  </ng-container>
+
+</div>
+
+
+{{set}}
+
+<!-- Footer -->
+<app-footer></app-footer>

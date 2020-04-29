@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
-
+import {IGameData, GameData} from '../../clases/gamedata';
 import { Observable } from 'rxjs';
-import { Iset,Set } from '../../sets';
+import { Iset,Set } from '../../clases/sets';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { ObserversModule } from '@angular/cdk/observers';
 import * as firebase from 'firebase';
@@ -25,14 +25,18 @@ export class FirestoreService {
   private afsU:AngularFirestoreCollection<User>;
 
 
+  private cookies_partidas:AngularFirestoreCollection<any>;
+  
   constructor(private firestore: AngularFirestore, public storage:AngularFireStorage) {
 
-    this.afs=this.firestore.collection('sets');
+    this.cookies_partidas=this.firestore.collection('cookies_partidas');
+
+  
 
     //Colección usuarios
     this.afsU=this.firestore.collection('usuarios');
+  
   }
-
 
 
 
@@ -41,7 +45,7 @@ export class FirestoreService {
   public createUser(data: User):Promise<string>
   {
     data.id=this.firestore.createId();
-    return this.afsU.doc(data.id).set({... data}).then(r=>{
+    return this.afsU.doc(data.id).set({data}).then(r=>{
       return data.id;
     });
   }
@@ -71,7 +75,15 @@ export class FirestoreService {
   public getOrderedUsers():Observable<User[]>{
 
     return this.firestore.collection<User>('usuarios',ref=>ref.orderBy('points', 'desc')).valueChanges();
+  }
 
+  public getGameCookie(id:string):Promise<any>{
+    return this.cookies_partidas.doc(id).get().toPromise();
+  
+  }
+
+  public updateGameCookie(data:GameData){
+    return this.cookies_partidas.doc(data.id).set(Object.assign({}, data));
   }
 
 
