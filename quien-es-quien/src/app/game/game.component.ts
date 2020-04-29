@@ -19,11 +19,11 @@ export class GameComponent implements OnInit {
     }
     this.matrix=[];
 
-    this.npc_list=fs.getFiles('characters/set0');
+    //this.npc_list=fs.getFiles('characters/set0');
     console.log(this.npc_list)
-       
+
     //Para rellenar la matriz
-    
+
     for(let i=0; i<4; i++){
       this.matrix.push( [] ) ;
       for(let j=0; j<6; j++){
@@ -36,23 +36,23 @@ export class GameComponent implements OnInit {
         this.matrix[i].push(npc);
       }
     }
-    
-    
 
-    
+
+
+
    }
 
   ngOnInit(): void {
-  
+
       /*for(let i=0; i<4; i++){
         this.matrix.push( [] ) ;
-      
+
         for(let j=0; j<6; j++){
-        
-        console.log(this.npc_list[i+j*4]);    
+
+        console.log(this.npc_list[i+j*4]);
 
         this.fs.getImg(this.npc_list[i+j*4]).subscribe(url=>{
-            
+
           let npc={
             "src": url,
             "state":0
@@ -61,9 +61,9 @@ export class GameComponent implements OnInit {
           this.matrix[i].push(npc);
         })
 
-        
+
       }
-    
+
     }*/
 
   }

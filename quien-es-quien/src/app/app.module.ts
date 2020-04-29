@@ -53,6 +53,7 @@ import { environment } from '../environments/environment';
 
 import { GlobalService } from './services/global/global.service';
 
+import { CookieService } from 'ngx-cookie-service';
 
 @NgModule({
   declarations: [
@@ -108,7 +109,7 @@ import { GlobalService } from './services/global/global.service';
     AngularFirestoreModule
 
   ],
-  providers: [GlobalService],
+  providers: [GlobalService, CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

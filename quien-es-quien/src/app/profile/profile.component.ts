@@ -6,6 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { User } from '../user';
 import { Subscription } from 'rxjs';
 
+
 import { GlobalService } from '../services/global/global.service';
 
 //Interfaz del dialog
@@ -34,6 +35,7 @@ export class ProfileComponent implements OnInit {
   public level:number;
   public points:number;
 
+  public profilePic:string;
 
 
   constructor(private fs: FirestoreService, private router: Router, private route: ActivatedRoute, public global: GlobalService, public dialog: MatDialog) {
@@ -41,6 +43,7 @@ export class ProfileComponent implements OnInit {
     this.username = this.global.actualUser.username;
     this.level = this.global.actualUser.level;
     this.points = this.global.actualUser.points;
+
   }
 
   ngOnInit(): void {
@@ -83,8 +86,6 @@ export class ProfileComponent implements OnInit {
 
     public selectedFile: File;
 
-
-
     public user: User;
     public users: User[];
     public sUsers: Subscription;
@@ -120,22 +121,10 @@ export class ProfileComponent implements OnInit {
     }
 
 
-
-    public uploadPhoto(){
-      console.log(this.selectedFile);
-      let profilePhotoRef = this.storageRef.ref('profilePhotos/' + this.global.actualUser.id);
-
-      let file = this.selectedFile;
-      profilePhotoRef.put(file).then(function(snapshot) {
-        console.log('Uploaded a blob or file!');
-      });
-
-    }
-
-
-
+    //Función para guardar cambios del perfil
     public save(){
       this.alreadyUser = false;
+
       if (this.data.newName == undefined || this.data.newName == ""){
         this.user.name = this.global.actualUser.name;
       }
@@ -166,12 +155,24 @@ export class ProfileComponent implements OnInit {
         console.log('usuario repe');
       }
       else{
-        this.user.username = this.data.newUsername;
         this.user.id = this.global.actualUser.id;
 
         this.fs.updateUser(this.user);
         this.onNoClick();
       }
+
+
+      //Subir la foto de perfil
+      if (this.selectedFile != undefined) {
+        let profilePhotoRef = this.storageRef.ref('profilePhotos/' + this.global.actualUser.id);
+
+        let file = this.selectedFile;
+        profilePhotoRef.put(file).then(function(snapshot) {
+          console.log('foto subida');
+
+        });
+      }
+
 
 
     }

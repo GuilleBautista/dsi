@@ -16,11 +16,16 @@ export class HeaderComponent implements OnInit {
   public username:string;
   public level:number;
 
+  public defaultProfilePicH:string="";
+
 
   constructor(private fs: FirestoreService, private router: Router, private route: ActivatedRoute,  public global: GlobalService) {
     this.username = this.global.actualUser.username;
     this.level = this.global.actualUser.level;
 
+    this.fs.getImg("profilePhotos/user.svg").subscribe(url=>{
+      this.defaultProfilePicH=url;
+    });
   }
 
   ngOnInit(): void{

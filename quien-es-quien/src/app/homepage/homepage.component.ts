@@ -9,6 +9,8 @@ import { Subscription } from 'rxjs';
 
 import { GlobalService } from '../services/global/global.service';
 
+import { CookieService } from 'ngx-cookie-service';
+
 
 //Interfaz del dialog
 export interface DialogData {
@@ -32,7 +34,7 @@ export class HomepageComponent implements OnInit {
   name: string;
 
 
-  constructor(public dialog: MatDialog) {}
+  constructor(public dialog: MatDialog, private cookieService: CookieService) {}
 
   //Función para abrir el popup de login
   openLogin(): void {
@@ -212,6 +214,12 @@ export class registerDialog implements OnInit {
       this.global.actualUser = this.user;
       this.onNoClick();
       this.router.navigate(["/profile"]);
+
+      // this.firestoreService.getImg("profilePhotos/user.svg").subscribe(url=>{
+      //   this.global.actualPhoto=url;
+      //   console.log(this.global.actualPhoto);
+      //
+      // });
     }
 
   }
