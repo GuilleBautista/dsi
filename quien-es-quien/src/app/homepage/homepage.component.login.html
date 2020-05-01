@@ -29,7 +29,8 @@
 <div class="centerLogin">
 
   <!-- Para que no lo podamos pulsar hasta que no hayamos rellenado todos los campos hacemos todas las comparaciones -->
-  <button [disabled]="data.username == undefined || data.username =='' || data.password == undefined || data.password ==''" class="buttonI" mat-raised-button color="primary" (click)='start()'>Iniciar</button>
+  <button [disabled]="data.username == undefined || data.username =='' || data.password == undefined || data.password ==''" 
+    class="buttonI" mat-raised-button color="primary" (click)='login()'>Iniciar</button>
 
 
 </div>

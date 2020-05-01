@@ -1,17 +1,18 @@
+//Imports basicos
 import { Component, OnInit, Inject } from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { Router, ActivatedRoute } from '@angular/router';
+
+//Tipos de datos
+import { User } from '../user';
 import { SesionData } from '../clases/sesiondata';
 import { cookie_time } from '../global';
-
-import { CookieService } from 'ngx-cookie-service';
-
-
-import { Router, ActivatedRoute } from '@angular/router';
-import { User } from '../user';
-import { FirestoreService } from '../services/firestore/firestore.service'
 import { Subscription } from 'rxjs';
 
+//Servicios
 import { GlobalService } from '../services/global/global.service';
+import { FirestoreService } from '../services/firestore/firestore.service'
+import { CookieService } from 'ngx-cookie-service';
 
 
 
@@ -36,7 +37,8 @@ export class HomepageComponent implements OnInit {
   password: string;
   name: string;
 
-  constructor(public dialog: MatDialog, private cookieService: CookieService, private fs: FirestoreService) {
+  constructor(public dialog: MatDialog, private cookieService: CookieService, private fs: FirestoreService, private global:GlobalService,
+    public router: Router, public route: ActivatedRoute) {
     
   }
 
@@ -61,11 +63,13 @@ export class HomepageComponent implements OnInit {
     
     if(sesionid!=""){
       //Si tenemos la cookie de sesion comprobamos si existe
+      console.log("tenemos cookie de sesion:", sesionid);
 
       this.fs.getSesionCookie(sesionid).then(data=>{
         //comprobamos si la sesion existe
         if(data.exists){
           //Si la sesion existe la cargamos
+          console.log("cargando datos de sesion")
           this.loadSesionData(data);
         }
         else{
@@ -95,13 +99,19 @@ export class HomepageComponent implements OnInit {
   }
 
   private loadSesionData(sesion:any){
-    //TODO: cargar los datos de sesion
+    //Cargamos los datos de sesion
     let data=sesion.data();
-
+    //La sesion actual se reinicia
     this.cookieService.set("SesionId", data.id, cookie_time);
 
     if(data.uid!=""){
-      //login
+      //el usuario actual será el almacenado en la sesion
+      this.fs.getUser(data.uid).then(user=>{
+        this.global.actualUser=user;
+        //redirigimos al usuario a la pagina principal
+        this.router.navigate(['/principalpage']);
+      })
+
     }
     if (data.game!=""){
       //cargar partida
@@ -173,15 +183,18 @@ export class loginDialog implements OnInit{
 
 
   //Función para que un usuario registrado inicie sesión
-  public start(){
+  public login(){
     this.userR = false;
   //Comprobamos que hay un usuario con el mismo nombre y contraseña en la BD
     for (let i = 0; i < this.users.length; i++) {
       if (this.users[i].username == this.data.username && this.users[i].password == this.data.password) {
-        console.log('usuario encontrado');
+        console.log('el usuario existe');
         this.userR = true;
 
-        this.global.actualUser = new User(this.users[i].name, this.users[i].username, this.users[i].password, this.users[i].level, this.users[i].points, this.users[i].id);
+        //Iniciar sesion consiste en dar valor a esta variable
+        //TODO: posiblemente se pueda hacer de otra forma
+        this.global.actualUser = new User(this.users[i].name, this.users[i].username, this.users[i].password, 
+          this.users[i].level, this.users[i].points, this.users[i].id);
       }
     }
 
@@ -257,7 +270,7 @@ export class registerDialog implements OnInit {
   //Comprobamos que no hay un usuario con el mismo nombre de usuario en la BD
     for (let i = 0; i < this.users.length; i++) {
       if (this.users[i].username == this.data.username) {
-        console.log('usuario repe')
+        console.log('usuario repetido')
         this.eUser = true;
       }
     }
