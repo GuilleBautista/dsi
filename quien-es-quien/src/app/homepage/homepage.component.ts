@@ -48,22 +48,34 @@ export class HomepageComponent implements OnInit {
   ngOnInit(): void {
     let sesionid=this.cookieService.get("SesionId");
     
-    console.log(sesionid);
+    console.log("cookie de sesion: ",sesionid);
 
     if(sesionid!=""){
       //Si tenemos la cookie de sesion:
       let sesion_data=this.fs.getSesionCookie(sesionid);
+
       if(sesion_data!=undefined){
         //Si la sesion existe:
         this.loadSesionData(sesion_data);
       }else{
         //Si la sesion no existe la creamos
-      
 
+        let sesion_data=new SesionData({
+          id:sesionid,   //Asumimos que el id de sesion esta bien
+          uid:"",   //En la pagina principal no puede haber iniciado sesion
+          game:""   //En la pagina principal no puede haber iniciado una partida
+        })
+          
+        this.fs.createSesion(sesion_data);
+        //catch error: sesion duplicada => createSesion()
       }
 
     }else{
       //Si no la tenemos
+
+      this.generateSesion();
+
+      this.cookieService.set("SesionId", "3", 1/24);
     }
 
   }
@@ -72,6 +84,9 @@ export class HomepageComponent implements OnInit {
     //TODO: cargar los datos de sesion
   }
 
+  private generateSesion(){
+    //TODO: generar ids de sesion
+  }
 
 
 
