@@ -1,5 +1,9 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { SesionData } from '../clases/sesiondata';
+import { cookie_time } from '../global';
+
+import { CookieService } from 'ngx-cookie-service';
 
 
 import { Router, ActivatedRoute } from '@angular/router';
@@ -9,7 +13,6 @@ import { Subscription } from 'rxjs';
 
 import { GlobalService } from '../services/global/global.service';
 
-import { CookieService } from 'ngx-cookie-service';
 
 
 //Interfaz del dialog
@@ -33,8 +36,9 @@ export class HomepageComponent implements OnInit {
   password: string;
   name: string;
 
-
-  constructor(public dialog: MatDialog, private cookieService: CookieService) {}
+  constructor(public dialog: MatDialog, private cookieService: CookieService, private fs: FirestoreService) {
+    
+  }
 
   //Función para abrir el popup de login
   openLogin(): void {
@@ -53,7 +57,65 @@ export class HomepageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    let sesionid=this.cookieService.get("SesionId");
+    
+    if(sesionid!=""){
+      //Si tenemos la cookie de sesion comprobamos si existe
+
+      this.fs.getSesionCookie(sesionid).then(data=>{
+        //comprobamos si la sesion existe
+        if(data.exists){
+          //Si la sesion existe la cargamos
+          this.loadSesionData(data);
+        }
+        else{
+          //Si la sesion no existe la creamos
+
+          let sesion_data=new SesionData({
+            id:sesionid,   //Asumimos que el id de sesion esta bien
+            uid:"",        //En la pagina principal no puede haber iniciado sesion
+            game:""        //En la pagina principal no puede haber iniciado una partida
+          })
+            
+          this.fs.createSesion(sesion_data);
+          //catch error: sesion duplicada => createSesion()
+        }
+
+      }); //GetSesionCookie
+
+
+    }else{
+      //Si no la tenemos
+
+      this.generateSesion();
+
+      this.cookieService.set("SesionId", "3", 1/24);
+    }
+
   }
+
+  private loadSesionData(sesion:any){
+    //TODO: cargar los datos de sesion
+    let data=sesion.data();
+
+    this.cookieService.set("SesionId", data.id, cookie_time);
+
+    if(data.uid!=""){
+      //login
+    }
+    if (data.game!=""){
+      //cargar partida
+    }
+
+
+
+  }
+
+  private generateSesion(){
+    //TODO: generar ids de sesion
+  }
+
+
 
 }
 

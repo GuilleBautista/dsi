@@ -6,6 +6,7 @@ import { Iset,Set } from '../../clases/sets';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { ObserversModule } from '@angular/cdk/observers';
 import * as firebase from 'firebase';
+import { SesionData } from 'src/app/clases/sesiondata';
 
 
 import { User } from '../../user';
@@ -19,17 +20,17 @@ import { User } from '../../user';
 
 export class FirestoreService {
 
-  private afs:AngularFirestoreCollection<Set>;
-
   //FirestoreCollection
   private afsU:AngularFirestoreCollection<User>;
 
 
-  private cookies_partidas:AngularFirestoreCollection<any>;
+  private game_cookies:AngularFirestoreCollection<any>;
+  private sesion_cookies:AngularFirestoreCollection<any>;
   
   constructor(private firestore: AngularFirestore, public storage:AngularFireStorage) {
 
-    this.cookies_partidas=this.firestore.collection('cookies_partidas');
+    this.game_cookies=this.firestore.collection('game_cookies');
+    this.sesion_cookies=this.firestore.collection('sesion_cookies');
 
   
 
@@ -40,7 +41,7 @@ export class FirestoreService {
 
 
 
-//Funciones usuarios
+  //-------------------------Funciones usuarios-------------------------
 
   public createUser(data: User):Promise<string>
   {
@@ -49,7 +50,6 @@ export class FirestoreService {
       return data.id;
     });
   }
-
 
 
   public getUser(id: string):Promise<User>
@@ -71,36 +71,45 @@ export class FirestoreService {
     return this.afsU.doc(data.id).set(Object.assign({}, data));
   }
 
-
   public getOrderedUsers():Observable<User[]>{
 
     return this.firestore.collection<User>('usuarios',ref=>ref.orderBy('points', 'desc')).valueChanges();
   }
 
+
+//-------------------------Game cookies-------------------------
+
   public getGameCookie(id:string):Promise<any>{
-    return this.cookies_partidas.doc(id).get().toPromise();
+    return this.game_cookies.doc(id).get().toPromise();
   
   }
 
   public updateGameCookie(data:GameData){
-    return this.cookies_partidas.doc(data.id).set(Object.assign({}, data));
+    return this.game_cookies.doc(data.id).set(Object.assign({}, data));
   }
 
 
+//-------------------------Sesion Cookies-------------------------
+
+  //Para comprobar si una cookie de sesion existe
+  public getSesionCookie(sesionck:string):Promise<any>{
+    return this.sesion_cookies.doc(sesionck).get().toPromise();
+  }
+
+  //Recibe datos de sesion con id generado previamente
+  public createSesion(sesion_data:SesionData){
+    console.log("sesion cookies doc", this.sesion_cookies.doc(sesion_data.id))
+
+    //Creamos la sesion con los datos recibidos
+    this.sesion_cookies.doc(sesion_data.id).set(Object.assign({}, sesion_data));
+    
+  }
 
 
-public getStorage(){
-  return this.storage;
-}
+//-------------------------Storage Functions-------------------------
 
-
-
-
-
-  public getSets():Observable<Set[]>
-  {
-    return this.firestore.collection<Set>('sets',ref=>ref.orderBy('id')).valueChanges();
-
+  public getStorage(){
+    return this.storage;
   }
 
   public getImg(img:string):Observable<string>{
