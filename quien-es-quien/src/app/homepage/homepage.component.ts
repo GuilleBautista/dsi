@@ -73,7 +73,8 @@ export class HomepageComponent implements OnInit {
           this.loadSesionData(data);
         }
         else{
-          //Si la sesion no existe la creamos
+          //Si la sesion de la cookie no existe la creamos
+          //Esto significa que el usuario ha cargado la pagina de inicio o la de login pero no ha hecho nada y su sesion ha expirado
 
           let sesion_data=new SesionData({
             id:sesionid,   //Asumimos que el id de sesion esta bien
@@ -89,11 +90,11 @@ export class HomepageComponent implements OnInit {
 
 
     }else{
-      //Si no la tenemos
+      console.log("creando cookie de sesion");
+      //Si no la tenemos creamos una y creamos una cookie
+      let sesionid=this.fs.createSesion();
 
-      this.generateSesion();
-
-      this.cookieService.set("SesionId", "3", 1/24);
+      this.cookieService.set("SesionId", sesionid, 1/24);
     }
 
   }
@@ -120,11 +121,6 @@ export class HomepageComponent implements OnInit {
 
 
   }
-
-  private generateSesion(){
-    //TODO: generar ids de sesion
-  }
-
 
 
 }

@@ -10,6 +10,7 @@ import { SesionData } from 'src/app/clases/sesiondata';
 
 
 import { User } from '../../user';
+import { identifierModuleUrl } from '@angular/compiler';
 
 
 
@@ -85,7 +86,7 @@ export class FirestoreService {
   }
 
   public updateGameCookie(data:GameData){
-    return this.game_cookies.doc(data.id).set(Object.assign({}, data));
+    this.game_cookies.doc(data.id).set(Object.assign({}, data));
   }
 
 
@@ -96,12 +97,36 @@ export class FirestoreService {
     return this.sesion_cookies.doc(sesionck).get().toPromise();
   }
 
-  //Recibe datos de sesion con id generado previamente
-  public createSesion(sesion_data:SesionData){
-    console.log("sesion cookies doc", this.sesion_cookies.doc(sesion_data.id))
+  /*
+  Recibe:
+    sesion_data:SesionData En caso de recibirlo contendrá los datos con los que crear la sesion
+                id, uid y game
+  Devuelve:
+    id:string String que identificará a la sesion tanto en la bbdd como en el codigo
 
-    //Creamos la sesion con los datos recibidos
-    this.sesion_cookies.doc(sesion_data.id).set(Object.assign({}, sesion_data));
+  Crea una sesion con los valores correspondientes
+  Si no recibe datos crea una con valores por defecto
+  */ 
+  public createSesion(sesion_data?:SesionData):string{
+    if (sesion_data!=undefined){
+      var id=sesion_data.id;
+      //Creamos la sesion con los datos recibidos
+      this.sesion_cookies.doc(sesion_data.id).set(Object.assign({}, sesion_data));
+
+    }
+    else{
+      //Generamos un id a traves de firebase
+      var id=this.firestore.createId();
+      //Creamos una nueva sesion por defecto con ese id
+      this.sesion_cookies.doc(id).set(Object.assign({}, new SesionData({
+        uid:"",
+        game:"",
+        id:id
+      })));
+
+    }
+    //Devolvemos el id de la sesion creada
+    return id;
     
   }
 
