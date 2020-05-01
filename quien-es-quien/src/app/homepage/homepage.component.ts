@@ -1,5 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { CookieService } from 'ngx-cookie-service';
+import { FirestoreService } from '../services/firestore/firestore.service';
+import { SesionData } from '../clases/sesiondata';
 
 //Interfaz del dialog
 export interface DialogData {
@@ -22,7 +25,9 @@ export class HomepageComponent implements OnInit {
   password: string;
   name: string;
 
-  constructor(public dialog: MatDialog) {}
+  constructor(public dialog: MatDialog, private cookieService: CookieService, private fs: FirestoreService) {
+    
+  }
 
   //Función para abrir el popup de login
   openLogin(): void {
@@ -41,9 +46,42 @@ export class HomepageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    let sesionid=this.cookieService.get("SesionId");
+    
+    console.log(sesionid);
+
+    if(sesionid!=""){
+      //Si tenemos la cookie de sesion:
+      let sesion_data=this.fs.getSesionCookie(sesionid);
+      if(sesion_data!=undefined){
+        //Si la sesion existe:
+        this.loadSesionData(sesion_data);
+      }else{
+        //Si la sesion no existe la creamos
+      
+
+      }
+
+    }else{
+      //Si no la tenemos
+    }
+
   }
 
+  private loadSesionData(sesion_data:Promise<SesionData>){
+    //TODO: cargar los datos de sesion
+  }
+
+
+
+
 }
+
+
+
+
+
+
 
 //Componente auxiliar para login
 @Component({
