@@ -130,6 +130,13 @@ export class FirestoreService {
     
   }
 
+  /*
+  Delete a sesion
+  Called after window closes
+  */
+  public deleteSesion(sesion_id:string):void{
+    this.sesion_cookies.doc(sesion_id).delete();
+  }
 
 //-------------------------Storage Functions-------------------------
 

@@ -1,5 +1,5 @@
 //Imports basicos
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, HostListener, OnDestroy } from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -27,7 +27,7 @@ export interface DialogData {
 @Component({
   selector: 'app-homepage',
   templateUrl: './homepage.component.html',
-  styleUrls: ['./homepage.component.scss']
+  styleUrls: ['./homepage.component.scss'],
 })
 
 //Clase del HomepageComponent
@@ -58,6 +58,7 @@ export class HomepageComponent implements OnInit {
     });
   }
 
+
   ngOnInit(): void {
     let sesionid=this.cookieService.get("SesionId");
     
@@ -75,6 +76,8 @@ export class HomepageComponent implements OnInit {
         else{
           //Si la sesion de la cookie no existe la creamos
           //Esto significa que el usuario ha cargado la pagina de inicio o la de login pero no ha hecho nada y su sesion ha expirado
+
+          console.log("la cookie no existe en la bbdd");
 
           let sesion_data=new SesionData({
             id:sesionid,   //Asumimos que el id de sesion esta bien
@@ -94,11 +97,12 @@ export class HomepageComponent implements OnInit {
       //Si no la tenemos creamos una y creamos una cookie
       let sesionid=this.fs.createSesion();
 
-      this.cookieService.set("SesionId", sesionid, 1/24);
+      this.cookieService.set("SesionId", sesionid, cookie_time);
     }
 
   }
 
+  //Recibe una sesion en crudo de firebase
   private loadSesionData(sesion:any){
     //Cargamos los datos de sesion
     let data=sesion.data();
@@ -115,10 +119,8 @@ export class HomepageComponent implements OnInit {
 
     }
     if (data.game!=""){
-      //cargar partida
+      //TODO: cargar partida
     }
-
-
 
   }
 
