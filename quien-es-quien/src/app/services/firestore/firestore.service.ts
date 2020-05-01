@@ -43,8 +43,10 @@ export class FirestoreService {
 
   //Recibe datos de sesion con id generado previamente
   public createSesion(sesion_data:SesionData){
+    console.log("sesion cookies doc", this.sesion_cookies.doc(sesion_data.id))
+
     //Creamos la sesion con los datos recibidos
-    return this.sesion_cookies.doc(sesion_data.id).set(Object.assign({}, sesion_data)).then(r=>{
+    this.sesion_cookies.doc(sesion_data.id).set(Object.assign({}, sesion_data)).then(r=>{
       //Devuelve el id de la sesion
       console.log(r);
       return sesion_data.id;

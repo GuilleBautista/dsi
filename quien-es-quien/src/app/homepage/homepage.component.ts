@@ -3,6 +3,7 @@ import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog
 import { CookieService } from 'ngx-cookie-service';
 import { FirestoreService } from '../services/firestore/firestore.service';
 import { SesionData } from '../clases/sesiondata';
+import { cookie_time } from '../global';
 
 //Interfaz del dialog
 export interface DialogData {
@@ -48,27 +49,30 @@ export class HomepageComponent implements OnInit {
   ngOnInit(): void {
     let sesionid=this.cookieService.get("SesionId");
     
-    console.log("cookie de sesion: ",sesionid);
-
     if(sesionid!=""){
-      //Si tenemos la cookie de sesion:
-      let sesion_data=this.fs.getSesionCookie(sesionid);
+      //Si tenemos la cookie de sesion comprobamos si existe
 
-      if(sesion_data!=undefined){
-        //Si la sesion existe:
-        this.loadSesionData(sesion_data);
-      }else{
-        //Si la sesion no existe la creamos
+      this.fs.getSesionCookie(sesionid).then(data=>{
+        //comprobamos si la sesion existe
+        if(data.exists){
+          //Si la sesion existe la cargamos
+          this.loadSesionData(data);
+        }
+        else{
+          //Si la sesion no existe la creamos
 
-        let sesion_data=new SesionData({
-          id:sesionid,   //Asumimos que el id de sesion esta bien
-          uid:"",   //En la pagina principal no puede haber iniciado sesion
-          game:""   //En la pagina principal no puede haber iniciado una partida
-        })
-          
-        this.fs.createSesion(sesion_data);
-        //catch error: sesion duplicada => createSesion()
-      }
+          let sesion_data=new SesionData({
+            id:sesionid,   //Asumimos que el id de sesion esta bien
+            uid:"",        //En la pagina principal no puede haber iniciado sesion
+            game:""        //En la pagina principal no puede haber iniciado una partida
+          })
+            
+          this.fs.createSesion(sesion_data);
+          //catch error: sesion duplicada => createSesion()
+        }
+
+      }); //GetSesionCookie
+
 
     }else{
       //Si no la tenemos
@@ -80,8 +84,21 @@ export class HomepageComponent implements OnInit {
 
   }
 
-  private loadSesionData(sesion_data:Promise<SesionData>){
+  private loadSesionData(sesion:any){
     //TODO: cargar los datos de sesion
+    let data=sesion.data();
+
+    this.cookieService.set("SesionId", data.id, cookie_time);
+
+    if(data.uid!=""){
+      //login
+    }
+    if (data.game!=""){
+      //cargar partida
+    }
+
+
+
   }
 
   private generateSesion(){
