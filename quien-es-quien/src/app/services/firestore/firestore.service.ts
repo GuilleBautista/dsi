@@ -8,6 +8,8 @@ import { ObserversModule } from '@angular/cdk/observers';
 import * as firebase from 'firebase';
 import { SesionData } from 'src/app/clases/sesiondata';
 
+import { cookie_time } from '../../global';
+
 
 import { User } from '../../user';
 import { identifierModuleUrl } from '@angular/compiler';
@@ -106,8 +108,27 @@ export class FirestoreService {
 
   Crea una sesion con los valores correspondientes
   Si no recibe datos crea una con valores por defecto
+  Al crear una sesion nueva se borraran las antiguas de la base de datos
   */ 
   public createSesion(sesion_data?:SesionData):string{
+
+    //1: eliminamos las sesiones anteriores al tiempo de sesion
+
+    //cookie_time esta en dias por lo que aplicamos un factor de conversion a ms
+    let expiring_time=Date.now()-cookie_time*24*3600*1000;
+
+    //Eliminamos las entradas con fecha de creacion anterior a expiring_time
+    this.firestore.collection<SesionData>('sesion_cookies',ref=>ref
+    .where('cre_date', '<', expiring_time)).valueChanges().subscribe(result=>{
+      for(let sesion of result){
+        //Las eliminamos una a una
+        this.deleteSesion(sesion.id);
+      }
+    });
+
+    //2: creamos la sesion y la subimos
+
+    //Si hemos recibido datos los usamos
     if (sesion_data!=undefined){
       var id=sesion_data.id;
       //Creamos la sesion con los datos recibidos
@@ -121,7 +142,8 @@ export class FirestoreService {
       this.sesion_cookies.doc(id).set(Object.assign({}, new SesionData({
         uid:"",
         game:"",
-        id:id
+        id:id,
+        cre_date:Date.now()
       })));
 
     }

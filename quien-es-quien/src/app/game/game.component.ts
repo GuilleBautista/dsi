@@ -200,12 +200,12 @@ export class GameComponent implements OnInit {
     } 
   }
 
-  //Cambia el estado de selecting, convendría cambiar también el html
+  //Cambia el estado de selecting
   public toggleSelecting(){
     this.selecting=!this.selecting;
   }
 
-  //Funciones del juego
+  //----------------------------Funciones del juego----------------------------
 
   //Funcion a ejecutar cuando acaba la partida
   private end(){

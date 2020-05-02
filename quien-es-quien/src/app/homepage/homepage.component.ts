@@ -77,57 +77,59 @@ export class HomepageComponent implements OnInit {
           //Si la sesion de la cookie no existe la creamos
           //Esto significa que el usuario ha cargado la pagina de inicio o la de login pero no ha hecho nada y su sesion ha expirado
 
-          console.log("la cookie no existe en la bbdd");
+          console.log("la sesion no existe en la bbdd, creando sesion");
 
           let sesion_data=new SesionData({
             id:sesionid,   //Asumimos que el id de sesion esta bien
             uid:"",        //En la pagina principal no puede haber iniciado sesion
-            game:""        //En la pagina principal no puede haber iniciado una partida
+            game:"",       //En la pagina principal no puede haber iniciado una partida
+            cre_date:Date.now() //La fecha siempre es la actual
           })
             
           this.fs.createSesion(sesion_data);
           //catch error: sesion duplicada => createSesion()
         }
 
-      }); //GetSesionCookie
+      });
 
-
+    
     }else{
       console.log("creando cookie de sesion");
-      //Si no la tenemos creamos una y creamos una cookie
+      //Si no la tenemos creamos una sesion
       let sesionid=this.fs.createSesion();
-
+      //Creamos la cookie de la sesion
       this.cookieService.set("SesionId", sesionid, cookie_time);
     }
 
   }
 
-  //Recibe una sesion en crudo de firebase
+  /*
+  Recibe una sesion en crudo de firebase y la carga
+  El proceso de carga de sesion es iniciar sesion si existe un usuario
+    y reanudar una partida si existe una
+  */
   private loadSesionData(sesion:any){
     //Cargamos los datos de sesion
     let data=sesion.data();
     //La sesion actual se reinicia
     this.cookieService.set("SesionId", data.id, cookie_time);
-
+    
+    //Si el usuario habia iniciado sesion se vuelve a logear
     if(data.uid!=""){
       //el usuario actual será el almacenado en la sesion
       this.fs.getUser(data.uid).then(user=>{
         this.global.actualUser=user;
-        //redirigimos al usuario a la pagina principal
+        //redirigimos al usuario a la pagina principal provisionalmente
         this.router.navigate(['/principalpage']);
       })
 
     }
+    
+    //Si el usuario estaba en una partida se carga
     if (data.game!=""){
       //TODO: cargar partida
     }
 
-    this.fs.getSesionCookie("2").then(x=>{
-      console.log("xdata credate",x.data().cre_date);
-      console.log("resta ",Date.now() - x.data().crea_date);
-    });
-
-    this.fs.createSesion();
   }
 
 
