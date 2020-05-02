@@ -122,6 +122,12 @@ export class HomepageComponent implements OnInit {
       //TODO: cargar partida
     }
 
+    this.fs.getSesionCookie("2").then(x=>{
+      console.log("xdata credate",x.data().cre_date);
+      console.log("resta ",Date.now() - x.data().crea_date);
+    });
+
+    this.fs.createSesion();
   }
 
 
