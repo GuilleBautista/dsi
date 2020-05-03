@@ -60,80 +60,73 @@ export class HomepageComponent implements OnInit {
 
 
   ngOnInit(): void {
-    let sesionid=this.cookieService.get("SesionId");
+    let uid=this.cookieService.get("UID");
+    let game=this.cookieService.get("gameid");
+    let page=this.cookieService.get("page");
     
-    if(sesionid!=""){
-      //Si tenemos la cookie de sesion comprobamos si existe
-      console.log("tenemos cookie de sesion:", sesionid);
-
-      this.fs.getSesionCookie(sesionid).then(data=>{
-        //comprobamos si la sesion existe
-        if(data.exists){
-          //Si la sesion existe la cargamos
-          console.log("cargando datos de sesion")
-          this.loadSesionData(data);
-        }
-        else{
-          //Si la sesion de la cookie no existe la creamos
-          //Esto significa que el usuario ha cargado la pagina de inicio o la de login pero no ha hecho nada y su sesion ha expirado
-
-          console.log("la sesion no existe en la bbdd, creando sesion");
-
-          let sesion_data=new SesionData({
-            id:sesionid,   //Asumimos que el id de sesion esta bien
-            uid:"",        //En la pagina principal no puede haber iniciado sesion
-            game:"",       //En la pagina principal no puede haber iniciado una partida
-            cre_date:Date.now() //La fecha siempre es la actual
-          })
-            
-          this.fs.createSesion(sesion_data);
-          //catch error: sesion duplicada => createSesion()
-        }
-
-      });
-
-    
-    }else{
-      console.log("creando cookie de sesion");
-      //Si no la tenemos creamos una sesion
-      let sesionid=this.fs.createSesion();
-      //Creamos la cookie de la sesion
-      this.cookieService.set("SesionId", sesionid, cookie_time);
-    }
-
+    this.loadSesion(uid, game, page);
+     
   }
-
+  
   /*
-  Recibe una sesion en crudo de firebase y la carga
-  El proceso de carga de sesion es iniciar sesion si existe un usuario
-    y reanudar una partida si existe una
+  * Recibe:
+      uid: string que se corresponde con el id de un usuario de la bbdd
+      game: string que se corresponde con el id de una partida en la bbdd
+      page: string que se corresponde con la ultima pagina visitada por el usuario
+  * Funcion generica de carga de sesiones, para ponerla en cada pagina
+  * La funcion carga al usuario si existe y no está cargado, y lo mismo con la partida.
+  * Si no esta en una partida se navega a la ultima pagina cargada por el usuario
   */
-  private loadSesionData(sesion:any){
-    //Cargamos los datos de sesion
-    let data=sesion.data();
-    //La sesion actual se reinicia
-    this.cookieService.set("SesionId", data.id, cookie_time);
-    
-    //Si el usuario habia iniciado sesion se vuelve a logear
-    if(data.uid!=""){
-      //el usuario actual será el almacenado en la sesion
-      this.fs.getUser(data.uid).then(user=>{
+  private loadSesion(uid:string, game:string, page:string){
+
+    if(uid!=""){
+      //Primero iniciamos sesion
+      this.fs.getUser("rXK0CgR9oGzJjYgGsivi").then(user=>{
         this.global.actualUser=user;
-        //redirigimos al usuario a la pagina principal provisionalmente
-        this.router.navigate(['/principalpage']);
+      }).catch(error=>{
+        console.log("Error iniciando sesion:",error);
+        //Si hay un error eliminamos las cookies y recargamos la pagina
+        this.cookieService.deleteAll();
+        this.cookieService.set("page", "/", cookie_time);
+        this.router.navigate(["/"]);
       })
 
+    }else{
+      //Si no habia una sesion eliminamos las cookies y esperamos
+      this.cookieService.deleteAll();
     }
-    
-    //Si el usuario estaba en una partida se carga
-    if (data.game!=""){
+
+    //Luego comprobamos si estaba en una partida
+    if(game!=""){
       //TODO: cargar partida
+    }else{
+      //Si no estaba en partida no pasa nada
+    }
+
+    //Si no estaba en una partida le llevamos a la pagina en la que lo dejo
+    if(page!=""){
+      //Si estaba en una pagina le llevamos a esa pagina,
+      //  a no ser que sea la actual
+      if(this.router.url!=page){
+        this.cookieService.set("page", "/", cookie_time);
+        this.router.navigate([page]);
+      }
+    }else if(uid!=""){
+      //Si no estaba en ninguna pagina y habia iniciado sesion se le lleva a la principal
+            //Esto no deberia de pasar nunca
+      //Antes de ir a cualquier pagina cambiamos la cookie
+      this.cookieService.set("page", "/principalpage", cookie_time);
+      this.router.navigate(['/principalpage']);
+    }
+    else{
+      //Si no tenia pagina la pagina será esta
+      this.cookieService.set("page", "/", cookie_time);
     }
 
   }
 
+}//End homepage class
 
-}
 
 
 
@@ -165,7 +158,7 @@ export class loginDialog implements OnInit{
 
   //Constructor
   constructor(public dialogRef: MatDialogRef<loginDialog>, @Inject(MAT_DIALOG_DATA) public data: DialogData, private firestoreService: FirestoreService,
-              private router: Router, private route: ActivatedRoute, public global: GlobalService)
+              private router: Router, private route: ActivatedRoute, public global: GlobalService, private cookieService: CookieService)
   {
       //this.user=new User();
       this.users=[];
@@ -197,8 +190,11 @@ export class loginDialog implements OnInit{
         console.log('el usuario existe');
         this.userR = true;
 
-        //Iniciar sesion consiste en dar valor a esta variable
         //TODO: posiblemente se pueda hacer de otra forma
+        //Guardamos al usuario actual en la cookie
+        this.cookieService.set("uid", this.users[i].id, cookie_time);
+        
+        //Iniciar sesion consiste en dar valor a esta variable
         this.global.actualUser = new User(this.users[i].name, this.users[i].username, this.users[i].password, 
           this.users[i].level, this.users[i].points, this.users[i].id);
       }
@@ -207,6 +203,10 @@ export class loginDialog implements OnInit{
 
     if (this.userR) {
       this.onNoClick();
+      
+      //Antes de navegar a una pagina ponemos valor a la cookie
+      this.cookieService.set("page", "/principalpage", cookie_time);
+
       this.router.navigate(["/principalpage"]);
 
     }
@@ -248,7 +248,7 @@ export class registerDialog implements OnInit {
 
   //Constructor
   constructor(public dialogRef: MatDialogRef<registerDialog>, @Inject(MAT_DIALOG_DATA) public data: DialogData, private firestoreService: FirestoreService,
-              private router: Router, private route: ActivatedRoute, public global: GlobalService)
+              private router: Router, private route: ActivatedRoute, public global: GlobalService,  private cookieService: CookieService)
   {
       this.user=new User("", "", "", 0, 0, "");
       this.users=[];
@@ -294,6 +294,9 @@ export class registerDialog implements OnInit {
       this.firestoreService.createUser(this.user);
       this.global.actualUser = this.user;
       this.onNoClick();
+
+      //Antes de ir a una pagina cambiamos la cookie de la pagina
+      this.cookieService.set("page", "/profile", cookie_time);
       this.router.navigate(["/profile"]);
 
       // this.firestoreService.getImg("profilePhotos/user.svg").subscribe(url=>{
