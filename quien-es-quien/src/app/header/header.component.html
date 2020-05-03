@@ -15,7 +15,7 @@
   <button class="buttonRank" mat-raised-button color='warn' routerLink="/ranking">Ranking</button>
 
 
-  <p class="levelHeader">NIVEL {{level}}</p>
+  <p *ngIf="user!=undefined" class="levelHeader">NIVEL {{user.level}}</p>
 
   <div *ngIf="user!=undefined" class= "divProfileHeader">
     <img class="userPhoto" src="{{user.profilePhotoURL}}" (click)="goto('/profile')">

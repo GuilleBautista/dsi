@@ -47,7 +47,7 @@ export class ProfileComponent implements OnInit {
 
   constructor(private fs: FirestoreService, private router: Router, private route: ActivatedRoute, 
     public global: GlobalService, public dialog: MatDialog, private cookieService: CookieService) {
-   
+
       this.loadSesion(
         this.cookieService.get("uid"),
         this.cookieService.get("game")
@@ -65,7 +65,8 @@ export class ProfileComponent implements OnInit {
       width: '45%',
       data: {name: this.name, username: this.username, level: this.level, points: this.points, profilePic: this.profilePic}
     }).afterClosed().subscribe(x=>{
-      this.user=this.global.actualUser;
+        //Al cerrar actualizamos el usuario
+        this.user=this.global.actualUser;
     });
 
     //actualizamos el usuario despues de editar
@@ -146,9 +147,9 @@ export class ProfileComponent implements OnInit {
 
 }
 
-  //EDITAR----------------------------------------------------------------------
+  //--------------------------POPUP PARA EDITAR--------------------------
 
-  //Componente auxiliar para edit
+  //Componente auxiliar para editar
   @Component({
     selector: 'app-profile-edit',
     templateUrl: './profile.component.edit.html',
@@ -210,7 +211,7 @@ export class ProfileComponent implements OnInit {
 
 
     //Función para guardar cambios del perfil
-    public save(){
+    public async save(){
       this.alreadyUser = false;
       //si ha introducido un nombre lo cambiamos
       if (this.data.newName != undefined && this.data.newName != ""){
@@ -242,14 +243,7 @@ export class ProfileComponent implements OnInit {
       }
       else{
         //Si el usuario no esta repetido lo actualizamos
-        this.fs.updateUser(this.user).then(x=>{
-          //Tras actualizar el usuario actualizamos la foto de perfil
-          //TODO: actualizar todo
-          this.fs.getImg("profilePhotos/"+this.user.id).subscribe(url=>{
-             this.global.actualUser.profilePhotoURL=url;
-          });
-          
-        });
+        this.fs.updateUser(this.user);
         //Cerramos el popup
         this.onNoClick();
       }
@@ -260,18 +254,17 @@ export class ProfileComponent implements OnInit {
         let profilePhotoRef = this.storageRef.ref('profilePhotos/' + this.global.actualUser.id);
 
         let file = this.selectedFile;
-
-        profilePhotoRef.put(file).then(function(snapshot) {
-          console.log('foto subida');
-
+        
+        //Cambiamos la foto de perfil
+        await profilePhotoRef.put(file).then(x=>{
+          //Nos subscribimos al cambio, ya que la foto puede tardar en subirse
+          this.fs.getImg("profilePhotos/"+this.user.id).subscribe(url=>{
+            //Actualizamos la foto de la variable global
+            this.global.actualUser.profilePhotoURL=url;
+          });
         });
 
-
-       
-
       }
-
-
 
     }
 
