@@ -1,13 +1,18 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import { FirestoreService } from '../services/firestore/firestore.service';
-import { AngularFireStorage } from '@angular/fire/storage';
+
 import { Router, ActivatedRoute } from '@angular/router';
-import { User } from '../user';
 import { Subscription } from 'rxjs';
+
+import { User } from '../user';
+import { cookie_time } from '../global';
 
 
 import { GlobalService } from '../services/global/global.service';
+import { CookieService } from 'ngx-cookie-service';
+import { FirestoreService } from '../services/firestore/firestore.service';
+import { AngularFireStorage } from '@angular/fire/storage';
+
 
 //Interfaz del dialog
 export interface DialogData {
@@ -40,38 +45,14 @@ export class ProfileComponent implements OnInit {
   public user: User;
 
 
-  constructor(private fs: FirestoreService, private router: Router, private route: ActivatedRoute, public global: GlobalService, public dialog: MatDialog) {
-
-    this.user=new User(this.global.actualUser.name, this.global.actualUser.username, this.global.actualUser.password, this.global.actualUser.level, this.global.actualUser.points, this.global.actualUser.id,this.global.actualUser.profilePhotoURL);
-
-    this.name = this.user.name;
-    this.username = this.user.username;
-    this.level = this.user.level;
-    this.points = this.user.points;
-    this.profilePic = this.user.profilePhotoURL;
-
-    console.log(this.profilePic);
-
-    if (this.profilePic == "") {
-      this.fs.getImg("profilePhotos/user.svg").subscribe(url=>{
-        this.profilePic=url;
-        this.user.profilePhotoURL=url;
-        console.log(this.profilePic);
-      });
-
-      this.fs.updateUser(this.user);
-
-    }
-    else{
-      this.fs.getImg("profilePhotos/"+this.user.id).subscribe(url=>{
-        this.profilePic=url;
-      });
-
-      this.fs.updateUser(this.user);
-
-    }
-
-
+  constructor(private fs: FirestoreService, private router: Router, private route: ActivatedRoute, 
+    public global: GlobalService, public dialog: MatDialog, private cookieService: CookieService) {
+   
+      this.loadSesion(
+        this.cookieService.get("uid"),
+        this.cookieService.get("game")
+      );
+         
   }
 
   ngOnInit(): void {
@@ -83,8 +64,84 @@ export class ProfileComponent implements OnInit {
     const dialogRef = this.dialog.open(editDialog, {
       width: '45%',
       data: {name: this.name, username: this.username, level: this.level, points: this.points, profilePic: this.profilePic}
+    }).afterClosed().subscribe(x=>{
+      this.user=this.global.actualUser;
     });
+
+    //actualizamos el usuario despues de editar
+    
+
   }
+
+  /*
+  * Recibe:
+  *   -uid: string que se corresponde con el id de un usuario de la bbdd
+  *   -game: string que se corresponde con el id de una partida en la bbdd
+  * En este caso no recibimos la pagina, ya que si ha iniciado sesion se deja que navegue con la barra
+  * de navegacion, y si no se redirige automaticamente a la pagina de inicio.
+  *
+  * Funcion generica de carga de sesiones, para ponerla en cada pagina
+  * En este caso, la funcion hace de constructor, dando valor al usuario y a la foto de perfil
+  *   una vez que se ha iniciado sesion con la cookie.
+  *   Esto es para que se puedan recargar las paginas y no haya perdida de informacion.
+  *
+  * La funcion carga al usuario si existe y no está cargado, y lo mismo con la partida.
+  * En este caso, si no hay usuario se devuelve a la pagina de inicio para que se inicie sesion.
+  *
+  * Si no esta en una partida se navega a la ultima pagina cargada por el usuario
+  */
+ private loadSesion(uid:string, game:string){
+
+  if(uid!=""){
+
+    //Primero iniciamos sesion
+    this.fs.getUser(uid).then(user=>{
+      this.global.actualUser=user as User;
+
+      //Renovamos la cookie de sesion
+      this.cookieService.set("uid", uid, cookie_time);
+
+      //Tras iniciar sesion damos valor a las variables del componente
+      this.user=this.global.actualUser;
+
+      if(this.user.profilePhotoURL==""){
+        //Cargamos la foto de perfil por defecto del usuario
+        this.fs.getImg("profilePhotos/user.svg").subscribe(url=>{
+          this.global.actualUser.profilePhotoURL=url;
+          this.user.profilePhotoURL=url;
+
+          //Actualizamos la bbdd
+          this.fs.updateUser(this.user);
+
+        });
+
+      }
+    
+    }).catch(error=>{
+      console.log("Error iniciando sesion:",error);
+      //Si hay un error eliminamos las cookies y vamos a la pagina de inicio
+      this.cookieService.deleteAll();
+      this.cookieService.set("page", "/", cookie_time);
+      this.router.navigate(["/"]);
+    })
+
+  }else{
+    alert("la sesion ha caducado, inicia sesion de nuevo para continuar")
+    //Si no habia una sesion eliminamos las cookies
+    this.cookieService.deleteAll();
+
+    //Despues redirigimos a la pagina de inicio
+    this.cookieService.set("page", "/", cookie_time);
+    this.router.navigate(['/']);
+  }
+
+  //Es necesario cargar la partida estemos en la pagina que estemos
+  //  para evitar que se dejen las partidas a medias
+  if(game!=""){
+    //TODO: cargar partida
+  }
+
+}
 
 
 }
@@ -129,7 +186,7 @@ export class ProfileComponent implements OnInit {
       this.username = this.global.actualUser.username;
       this.password = this.global.actualUser.password;
 
-      this.user=new User(this.global.actualUser.name, this.global.actualUser.username, this.global.actualUser.password, this.global.actualUser.level, this.global.actualUser.points, this.global.actualUser.id, this.global.actualUser.profilePhotoURL);
+      this.user=this.global.actualUser;
     }
 
     ngOnInit() {
@@ -155,40 +212,45 @@ export class ProfileComponent implements OnInit {
     //Función para guardar cambios del perfil
     public save(){
       this.alreadyUser = false;
-
-      if (this.data.newName == undefined || this.data.newName == ""){
-        this.user.name = this.global.actualUser.name;
-      }
-      else{
+      //si ha introducido un nombre lo cambiamos
+      if (this.data.newName != undefined && this.data.newName != ""){
         this.user.name = this.data.newName;
       }
-
-      if(this.data.newUsername == undefined || this.data.newUsername == ""){
-        this.user.username = this.global.actualUser.username;
-      }
-      else{
+      //si ha introducido un nombre de usuario lo cambiamos
+      if(this.data.newUsername != undefined && this.data.newUsername != ""){
+        //TODO: hacer esto con una where
         //Comprobamos que no hay un usuario con el mismo nombre de usuario en la BD
         for (let i = 0; i < this.users.length; i++) {
           if(this.users[i].username == this.data.newUsername){
             this.alreadyUser = true;
           }
         }
+        //Si el nombre de usuario no esta repetido lo asignamos
+        if(!this.alreadyUser){
+          this.user.username=this.data.newUsername;
+        }
       }
-
-      if(this.data.newPassword == undefined || this.data.newPassword == ""){
-        this.user.password = this.global.actualUser.password;
-      }
-      else{
+      //Si ha introducido una contraseña la cambiamos
+      if(this.data.newPassword != undefined && this.data.newPassword != ""){
         this.user.password = this.data.newPassword;
       }
-
+  
       if(this.alreadyUser){
-        console.log('usuario repe');
+        //Si hay un error lo notificamos
+        //TODO: notificar en el popup
+        console.log('ERROR: nombre de usuario repetido');
       }
       else{
-        this.user.id = this.global.actualUser.id;
-
-        this.fs.updateUser(this.user);
+        //Si el usuario no esta repetido lo actualizamos
+        this.fs.updateUser(this.user).then(x=>{
+          //Tras actualizar el usuario actualizamos la foto de perfil
+          //TODO: actualizar todo
+          this.fs.getImg("profilePhotos/"+this.user.id).subscribe(url=>{
+             this.global.actualUser.profilePhotoURL=url;
+          });
+          
+        });
+        //Cerramos el popup
         this.onNoClick();
       }
 
@@ -198,17 +260,14 @@ export class ProfileComponent implements OnInit {
         let profilePhotoRef = this.storageRef.ref('profilePhotos/' + this.global.actualUser.id);
 
         let file = this.selectedFile;
+
         profilePhotoRef.put(file).then(function(snapshot) {
           console.log('foto subida');
 
         });
 
 
-        this.fs.getImg("profilePhotos/"+this.user.id).subscribe(url=>{
-          this.global.actualUser.profilePhotoURL=url;
-        });
-
-        console.log(this.global.actualUser.profilePhotoURL);
+       
 
       }
 

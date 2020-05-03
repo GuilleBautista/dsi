@@ -4,20 +4,20 @@
 <!-- Imagen fondo de pantalla -->
 <div class="wallpaperP">
 
-  <div class="card">
+  <div *ngIf="user!=undefined" class="card">
 
 
-    <h2 class="usernameProfile"> {{username}} </h2>
+    <h2 class="usernameProfile"> {{user.username}} </h2>
 
-    <h2 class="levelProfile"> NIVEL {{level}}</h2>
+    <h2 class="levelProfile"> NIVEL {{user.level}}</h2>
 
     <div class= "photoProfile">
-      <img class="userPhotoProfile"src="{{profilePic}}">
+      <img class="userPhotoProfile"src="{{user.profilePhotoURL}}">
     </div>
 
     <div class="divLevel">
-      <mat-progress-bar class="levelBar" mode="determinate" value="{{points}}" color="warn"></mat-progress-bar>
-      <p class="pointsProfile"> {{points}} PUNTOS de 100 </p>
+      <mat-progress-bar class="levelBar" mode="determinate" value="{{user.points}}" color="warn"></mat-progress-bar>
+      <p class="pointsProfile"> {{user.points}} PUNTOS de 100 </p>
     </div>
 
     <button class="buttonE" mat-raised-button color="warn" (click)='edit()'>Editar</button>
