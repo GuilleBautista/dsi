@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { User } from '../user';
-
 import { GlobalService } from '../services/global/global.service';
 import { CookieService } from 'ngx-cookie-service';
 import { FirestoreService } from '../services/firestore/firestore.service';
@@ -100,7 +98,7 @@ export class HeaderComponent implements OnInit {
 
       //Cargamos la foto de perfil del usuario
       this.fs.getImg("profilePhotos/user.svg").subscribe(url=>{
-      this.defaultProfilePicH=url;
+      this.profilePicH=url;
 
     });
     }).catch(error=>{

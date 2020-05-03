@@ -15,8 +15,9 @@
         <img  class= "characterPic" src="{{npc.url}}" (click)='onClickNpc(i, j);'>
 
       </ng-container>
-
-    </div>
+    </ng-container>
+    
+  </div>
 
   <h2 class="room">SALA 123</h2>
   <button *ngIf="selecting==false" class="buttonResolve" mat-raised-button (click)="openSnackBar(); toggleSelecting()">RESOLVER</button>

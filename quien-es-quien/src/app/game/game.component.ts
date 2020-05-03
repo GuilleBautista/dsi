@@ -52,7 +52,6 @@ export class GameComponent implements OnInit {
       this.set=history.state.data.set;//Cogemos el set de la url
       this.playerNpc=history.state.data.npc;//Cogemos el personaje de la url
       //Creamos una cookie TODO:generar los id de las cookies
-      this.setCookie();
     }
     else{
       if(this.cookieService.get('gameid')==""){
@@ -67,7 +66,6 @@ export class GameComponent implements OnInit {
 
       }
       else{
-      this.getCookie();
       }
     }
 
@@ -203,36 +201,7 @@ export class GameComponent implements OnInit {
 
     return result;
   }
-
-  private setCookie(){
-
-    let data={
-      id:"1",
-      set:this.set,
-      goal:this.goal,
-      npc:this.playerNpc
-
-    }
-
-    this.fs.updateGameCookie(data as GameData);
-
-    this.cookieService.set('gameid', data.id );
-
-  }
-
-  private getCookie(){
-    let gamedata = this.fs.getGameCookie(
-      this.cookieService.get('gameid')
-      );
-
-    gamedata.then(result=>{
-      let gd = result.data() as GameData;
-
-      this.set=gd.set;
-      this.playerNpc=gd.npc;
-      this.goal=gd.goal;
-    })
-  }
+ 
 
   //----------------------------Interaccion con el tablero:--------------------------------
 
