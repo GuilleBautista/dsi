@@ -1,15 +1,24 @@
 <!-- Header -->
 <app-header></app-header>
 
-<!-- Tablero -->
-<div class="table">
+<div class="setSelector">
+
   
-      <img *ngFor="let set of Sets;" class="set" src={{set.route}} alt="set {{set.id}}" (click)="select(set.id)" >
-      
-      <br>
+  <h4 class="titleSetSelector">Elige el pack de personajes con el que quieres jugar</h4>
+
+  <!-- Sets -->
+  <div class="divSets">
+
+    <div *ngFor="let set of Sets;" class="divSet">
+      <img class="set" src={{set.route}} alt="set {{set.id}}" (click)="select(set.id)">
+
+      <h2 class="nameSet">SET {{set.id}}</h2>
+    </div>
 
   </div>
 
+
+</div>
 
 <!-- Footer -->
 <app-footer></app-footer>

@@ -1,0 +1,39 @@
+.wallpaperPP{
+  background-image: url('/assets/img/fondo.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+  height: 100%;
+  min-height: 84%;
+}
+
+.divSala{
+  height: 30%;
+  width: 30%;
+  position: absolute;
+  left: 35%;
+  top: 45%;
+}
+
+.titleNumSala{
+  font-size: 330%;
+  text-align: center;
+}
+
+.inputNum{
+  width: 40%;
+  height: 22%;
+  left: 28%;
+  position: relative;
+  font-size: 200%;
+}
+
+.buttonA{
+  position: relative;
+  top: 30%;
+  width: 20%;
+  height: 16%;
+  font-size: 160%;
+  right: 3%;
+}

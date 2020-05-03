@@ -1,9 +1,21 @@
+.game{
+  min-height: 84%;
+  position: relative;
+}
+
+.table{
+  width: 55%;
+  height: auto;
+  margin-top: 3%;
+}
+
 .characterPic{
-  width: 9%;
+  width: 16%;
   height: auto;
   margin-bottom: 0.05%;
   margin-right: 0.05%;
   z-index: 1;
+  cursor: pointer;
 }
 
 .x{
@@ -13,4 +25,84 @@
   margin-right: 0.05%;
   position: absolute;
   z-index: 2;
+  cursor: pointer;
+}
+
+.room{
+  position: absolute;
+  left: 54%;
+  top: 6%;
+  font-size: 200%;
+}
+
+.buttonResolve{
+  position: absolute;
+  left: 53%;
+  top: 12%;
+  width: 9%;
+  height: 7%;
+  font-size: 160%;
+  background-color: #ed1c24;
+  color: white;
+}
+
+.chat{
+  position: absolute;
+  width: 35%;
+  height: 97%;
+  left: 64%;
+  top: -5%;
+  border: 3px solid black;
+  background-color: #235789;
+}
+
+.titleChat{
+  text-align: center;
+  margin-top: 4%;
+  font-size: 300%;
+}
+
+.inputChat{
+  position: relative;
+  width: 91%;
+  height: 6%;
+  top: 60%;
+  left: 3%;
+  font-size: 160%;
+}
+
+
+.divSend{
+  position: relative;
+  left: 88%;
+  top:54%;
+  width: 6%;
+  height: auto;
+}
+
+
+.send{
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.msg{
+  position: relative;
+  width: 50%;
+  height: 4%;
+  top: 55%;
+  left: 46%;
+  margin-top: 2%;
+  padding-right: 1%;
+  padding-top: 2%;
+  background-color: white;
+  font-size: 160%;
+  text-align: right;
+}
+
+.msgRight{
+  
+  color: red;
+
 }

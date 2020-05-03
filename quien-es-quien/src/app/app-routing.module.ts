@@ -6,6 +6,7 @@ import { HomepageComponent, loginDialog, registerDialog } from './homepage/homep
 import { PrincipalPageComponent } from './principal-page/principal-page.component';
 import { GameComponent } from './game/game.component';
 import { SetSelectorComponent } from './set-selector/set-selector.component';
+import { RoomSelectorComponent } from './room-selector/room-selector.component';
 import { ProfileComponent, editDialog } from './profile/profile.component';
 import { RankingComponent } from './ranking/ranking.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
@@ -15,6 +16,7 @@ const routes: Routes = [
   { path: '', component: HomepageComponent, pathMatch: 'full'}, //Para que cuando la ruta sea '' se vaya a la página de inicio
   { path: 'principalpage', component: PrincipalPageComponent },
   { path: 'game', component: GameComponent },
+  { path: 'room-selector', component: RoomSelectorComponent },
   { path: 'set-selector', component: SetSelectorComponent,  },
   { path: 'profile', component: ProfileComponent },
   { path: 'ranking', component: RankingComponent },
@@ -28,4 +30,4 @@ const routes: Routes = [
 export class AppRoutingModule { }
 
 //Constante para guardar todos los componentes que hemos importado solo aquí, así solo tenemos que importar roitingComponents en app.module.ts
-export const routingComponents = [HomepageComponent, loginDialog, registerDialog, PrincipalPageComponent, GameComponent, ProfileComponent, editDialog, RankingComponent, PageNotFoundComponent]
+export const routingComponents = [HomepageComponent, loginDialog, registerDialog, PrincipalPageComponent, GameComponent, RoomSelectorComponent, ProfileComponent, editDialog, RankingComponent, PageNotFoundComponent]

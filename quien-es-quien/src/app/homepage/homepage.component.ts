@@ -119,7 +119,7 @@ export class loginDialog implements OnInit{
         console.log('usuario encontrado');
         this.userR = true;
 
-        this.global.actualUser = new User(this.users[i].name, this.users[i].username, this.users[i].password, this.users[i].level, this.users[i].points, this.users[i].id);
+        this.global.actualUser = new User(this.users[i].name, this.users[i].username, this.users[i].password, this.users[i].level, this.users[i].points, this.users[i].id, this.users[i].profilePhotoURL);
       }
     }
 
@@ -169,7 +169,7 @@ export class registerDialog implements OnInit {
   constructor(public dialogRef: MatDialogRef<registerDialog>, @Inject(MAT_DIALOG_DATA) public data: DialogData, private firestoreService: FirestoreService,
               private router: Router, private route: ActivatedRoute, public global: GlobalService)
   {
-      this.user=new User("", "", "", 0, 0, "");
+      this.user=new User("", "", "", 0, 0, "","");
       this.users=[];
   }
 
@@ -212,14 +212,11 @@ export class registerDialog implements OnInit {
 
       this.firestoreService.createUser(this.user);
       this.global.actualUser = this.user;
+
       this.onNoClick();
       this.router.navigate(["/profile"]);
 
-      // this.firestoreService.getImg("profilePhotos/user.svg").subscribe(url=>{
-      //   this.global.actualPhoto=url;
-      //   console.log(this.global.actualPhoto);
-      //
-      // });
+
     }
 
   }

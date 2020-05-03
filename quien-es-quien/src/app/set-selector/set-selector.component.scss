@@ -1,9 +1,32 @@
+.setSelector{
+  min-height: 84%;
+}
+
+.titleSetSelector{
+  text-align: center;
+  margin-top: 5%;
+  font-size: 25px;
+}
+
+.divSets{
+  margin-top: 3%;
+  display: flex;
+}
+
+.divSet{
+}
+
 .set{
-    width: 25%;
-    height: 25%;
-    border: 3px solid;
+    width: 85%;
+    height: auto;
     padding: 10px;
-    margin-bottom: 10px;
-    margin-right: 10px;
+    margin-right: 3%;
+    left: 6%;
+    position: relative;
+    cursor: pointer;
   }
-  
+
+.nameSet{
+  text-align: center;
+  font-weight: bold;
+}

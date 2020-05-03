@@ -9,6 +9,8 @@ import * as firebase from 'firebase';
 
 
 import { User } from '../../user';
+import { Game } from '../../game';
+
 
 
 
@@ -23,6 +25,8 @@ export class FirestoreService {
 
   //FirestoreCollection
   private afsU:AngularFirestoreCollection<User>;
+  private afsG:AngularFirestoreCollection<Game>;
+
 
 
   constructor(private firestore: AngularFirestore, public storage:AngularFireStorage) {
@@ -31,7 +35,34 @@ export class FirestoreService {
 
     //Colección usuarios
     this.afsU=this.firestore.collection('usuarios');
+
+    //Colección partidas
+    this.afsG=this.firestore.collection('game');
   }
+
+
+
+//Funciones partida
+
+public createGame(data: Game):Promise<string>{
+  data.idGame=this.firestore.createId();
+  return this.afsG.doc(data.idGame).set({... data}).then(r=>{
+    return data.idGame;
+  });
+}
+
+
+public getGame(id: string):Promise<Game>{
+  return this.afsG.doc(id).get().toPromise().then(r=>{
+    return r.data() as Game;
+  });
+
+}
+
+public updateGame(data:Game){
+  return this.afsG.doc(data.idGame).set(Object.assign({}, data));
+}
+
 
 
 

@@ -37,23 +37,52 @@ export class ProfileComponent implements OnInit {
 
   public profilePic:string;
 
+  public user: User;
+
 
   constructor(private fs: FirestoreService, private router: Router, private route: ActivatedRoute, public global: GlobalService, public dialog: MatDialog) {
-    this.name = this.global.actualUser.name;
-    this.username = this.global.actualUser.username;
-    this.level = this.global.actualUser.level;
-    this.points = this.global.actualUser.points;
+
+    this.user=new User(this.global.actualUser.name, this.global.actualUser.username, this.global.actualUser.password, this.global.actualUser.level, this.global.actualUser.points, this.global.actualUser.id,this.global.actualUser.profilePhotoURL);
+
+    this.name = this.user.name;
+    this.username = this.user.username;
+    this.level = this.user.level;
+    this.points = this.user.points;
+    this.profilePic = this.user.profilePhotoURL;
+
+    console.log(this.profilePic);
+
+    if (this.profilePic == "") {
+      this.fs.getImg("profilePhotos/user.svg").subscribe(url=>{
+        this.profilePic=url;
+        this.user.profilePhotoURL=url;
+        console.log(this.profilePic);
+      });
+
+      this.fs.updateUser(this.user);
+
+    }
+    else{
+      this.fs.getImg("profilePhotos/"+this.user.id).subscribe(url=>{
+        this.profilePic=url;
+      });
+
+      this.fs.updateUser(this.user);
+
+    }
+
 
   }
 
   ngOnInit(): void {
+
   }
 
   //Función para abrir el popup de edit
   public edit(): void{
     const dialogRef = this.dialog.open(editDialog, {
       width: '45%',
-      data: {name: this.name, username: this.username, level: this.level, points: this.points}
+      data: {name: this.name, username: this.username, level: this.level, points: this.points, profilePic: this.profilePic}
     });
   }
 
@@ -90,6 +119,8 @@ export class ProfileComponent implements OnInit {
     public users: User[];
     public sUsers: Subscription;
 
+    public profilePic: string;
+
 
     //Constructor
     constructor(public dialogRef: MatDialogRef<editDialog>, @Inject(MAT_DIALOG_DATA) public data: DialogData, public global: GlobalService, private fs: FirestoreService, public storageRef:AngularFireStorage) {
@@ -98,7 +129,7 @@ export class ProfileComponent implements OnInit {
       this.username = this.global.actualUser.username;
       this.password = this.global.actualUser.password;
 
-      this.user=new User(this.global.actualUser.name, this.global.actualUser.username, this.global.actualUser.password, this.global.actualUser.level, this.global.actualUser.points, this.global.actualUser.id);
+      this.user=new User(this.global.actualUser.name, this.global.actualUser.username, this.global.actualUser.password, this.global.actualUser.level, this.global.actualUser.points, this.global.actualUser.id, this.global.actualUser.profilePhotoURL);
     }
 
     ngOnInit() {
@@ -171,6 +202,14 @@ export class ProfileComponent implements OnInit {
           console.log('foto subida');
 
         });
+
+
+        this.fs.getImg("profilePhotos/"+this.user.id).subscribe(url=>{
+          this.global.actualUser.profilePhotoURL=url;
+        });
+
+        console.log(this.global.actualUser.profilePhotoURL);
+
       }
 
 
