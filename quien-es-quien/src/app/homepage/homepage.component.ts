@@ -82,7 +82,12 @@ export class HomepageComponent implements OnInit {
       //Primero iniciamos sesion
       this.fs.getUser(uid).then(user=>{
         this.global.actualUser=user;
+        //Si habia una sesion vamos a la pagina principal
+        this.cookieService.set("page", "/principalpage", cookie_time);
+        this.router.navigate(["/principalpage"]);
+
       }).catch(error=>{
+        console.log("Error iniciando sesion", error);
         //Si hay un error eliminamos las cookies y recargamos la pagina
         this.cookieService.deleteAll();
         this.cookieService.set("page", "/", cookie_time);
@@ -106,7 +111,7 @@ export class HomepageComponent implements OnInit {
       //Si estaba en una pagina le llevamos a esa pagina,
       //  a no ser que sea la actual
       if(this.router.url!=page){
-        this.cookieService.set("page", "/", cookie_time);
+        this.cookieService.set("page", page, cookie_time);
         this.router.navigate([page]);
       }
     }else if(uid!=""){

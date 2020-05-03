@@ -17,11 +17,6 @@ import { User } from '../user';
 export class HeaderComponent implements OnInit {
 
 
-  public username:string;
-  public level:number;
-
-  public profilePicH:string;
-
   public user: User;
 
 
@@ -33,31 +28,7 @@ export class HeaderComponent implements OnInit {
       this.cookieService.get("uid"),
       this.cookieService.get("game")
     );
-
-    this.user=new User(this.global.actualUser.name, this.global.actualUser.username, this.global.actualUser.password, this.global.actualUser.level, this.global.actualUser.points, this.global.actualUser.id,this.global.actualUser.profilePhotoURL);
-
-    this.username = this.user.username;
-    this.level = this.user.level;
-    this.profilePicH = this.user.profilePhotoURL;
-
-    if (this.profilePicH == "") {
-      this.fs.getImg("profilePhotos/user.svg").subscribe(url=>{
-        this.profilePicH=url;
-        this.user.profilePhotoURL=url;
-        console.log(this.profilePicH);
-      });
-
-      this.fs.updateUser(this.user);
-
-    }
-    else{
-      this.fs.getImg("profilePhotos/"+this.user.id).subscribe(url=>{
-        this.profilePicH=url;
-      });
-
-      this.fs.updateUser(this.user);
-
-    }
+    
   }
 
   ngOnInit(): void{
@@ -93,14 +64,21 @@ export class HeaderComponent implements OnInit {
       this.cookieService.set("uid", uid, cookie_time);
 
       //Tras iniciar sesion damos valor a las variables del componente
-      this.username = this.global.actualUser.username;
-      this.level = this.global.actualUser.level;
+      this.user=this.global.actualUser;
 
-      //Cargamos la foto de perfil del usuario
-      this.fs.getImg("profilePhotos/user.svg").subscribe(url=>{
-      this.profilePicH=url;
+      if(this.user.profilePhotoURL==""){
+        //Cargamos la foto de perfil por defecto del usuario
+        this.fs.getImg("profilePhotos/user.svg").subscribe(url=>{
+          this.global.actualUser.profilePhotoURL=url;
+          this.user.profilePhotoURL=url;
 
-    });
+          //Actualizamos la bbdd
+          this.fs.updateUser(this.user);
+
+        });
+
+      }
+    
     }).catch(error=>{
       console.log("Error iniciando sesion:",error);
       //Si hay un error eliminamos las cookies y vamos a la pagina de inicio
@@ -124,7 +102,6 @@ export class HeaderComponent implements OnInit {
   if(game!=""){
     //TODO: cargar partida
   }
-
 
 }
 
