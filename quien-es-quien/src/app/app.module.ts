@@ -50,10 +50,11 @@ import { SetSelectorComponent } from './set-selector/set-selector.component';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { environment } from '../environments/environment';
+import { NpcSelectorComponent } from './npc-selector/npc-selector.component';
+import { CookieService } from 'ngx-cookie-service';
 
 import { GlobalService } from './services/global/global.service';
 
-import { CookieService } from 'ngx-cookie-service';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { CookieService } from 'ngx-cookie-service';
     HeaderComponent,
     FooterComponent,
     routingComponents,
-    SetSelectorComponent
+    SetSelectorComponent,
+    NpcSelectorComponent
   ],
   imports: [
     FormsModule,

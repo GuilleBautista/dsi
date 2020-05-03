@@ -39,9 +39,12 @@ export class SetSelectorComponent implements OnInit {
   }
 
   select(id:string){
-    this.router.navigate(['/game'],     // En URL y participan en el routing.
-    //{param_extra1:'XXX',param_extra2:57}],  // Se pasan codificados en la url.
-    { state: { param_not_in_url: id }}   // No se muestran en la URL
+    //Creamos una estructura de datos para devolver
+    let data={
+      set: id   
+    }
+    this.router.navigate(['/npc-selector'],
+      { state: { data: data }}   // No se muestran en la URL
     );
   }
 
