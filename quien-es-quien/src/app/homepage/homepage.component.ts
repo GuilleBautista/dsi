@@ -5,7 +5,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 //Tipos de datos
 import { User } from '../user';
-import { SesionData } from '../clases/sesiondata';
 import { cookie_time } from '../global';
 import { Subscription } from 'rxjs';
 
@@ -60,12 +59,12 @@ export class HomepageComponent implements OnInit {
 
 
   ngOnInit(): void {
-    let uid=this.cookieService.get("UID");
+    let uid=this.cookieService.get("uid");
     let game=this.cookieService.get("gameid");
     let page=this.cookieService.get("page");
     
     this.loadSesion(uid, game, page);
-     
+    
   }
   
   /*
@@ -81,10 +80,9 @@ export class HomepageComponent implements OnInit {
 
     if(uid!=""){
       //Primero iniciamos sesion
-      this.fs.getUser("rXK0CgR9oGzJjYgGsivi").then(user=>{
+      this.fs.getUser(uid).then(user=>{
         this.global.actualUser=user;
       }).catch(error=>{
-        console.log("Error iniciando sesion:",error);
         //Si hay un error eliminamos las cookies y recargamos la pagina
         this.cookieService.deleteAll();
         this.cookieService.set("page", "/", cookie_time);

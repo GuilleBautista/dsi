@@ -62,8 +62,10 @@ export class HeaderComponent implements OnInit {
 
     //Primero iniciamos sesion
     this.fs.getUser(uid).then(user=>{
-      console.log("se ha cargado la sesion: ", user);
       this.global.actualUser=user as User;
+
+      //Renovamos la cookie de sesion
+      this.cookieService.set("uid", uid, cookie_time);
       
       //Tras iniciar sesion damos valor a las variables del componente
       this.username = this.global.actualUser.username;
@@ -92,7 +94,6 @@ export class HeaderComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  //Luego comprobamos si estaba en una partida
   //Es necesario cargar la partida estemos en la pagina que estemos
   //  para evitar que se dejen las partidas a medias
   if(game!=""){

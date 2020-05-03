@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
+import { cookie_time } from '../global';
+
+import { CookieService } from 'ngx-cookie-service';
+
+
 @Component({
   selector: 'app-principal-page',
   templateUrl: './principal-page.component.html',
@@ -17,9 +22,12 @@ export class PrincipalPageComponent implements OnInit {
   * en la que se encontraba el usuario previamente.
   */
 
-  constructor( ) { }
+  constructor(private cookieService: CookieService ) { }
 
   ngOnInit(): void {
+    //Tras cargar cualquier pagina se cambia la cookie a la de la propia pagina
+    //Esto se hace para evitar incoherencias si le damos a atras en el navegador
+    this.cookieService.set("page", "/principalpage", cookie_time);
   }
 
 }
