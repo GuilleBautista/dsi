@@ -6,9 +6,13 @@
 
   <div class="divSala">
     <h1 class="titleNumSala">Introduce el número de sala</h1>
-    <input type="text" class="inputNum">
-    <button class="buttonA" mat-raised-button>Aceptar</button>
 
+    <form (ngSubmit)="submit($event)">
+        
+      <input matInput placeholder="123" class="inputNum" required>
+
+      <button class="buttonA" mat-raised-button type="submit">Aceptar</button>
+    </form>
   </div>
 
 </div>

@@ -44,14 +44,15 @@ export class GameComponent implements OnInit {
   public game: Game;
 
 
-  constructor(private fs: FirestoreService, public router: Router, public route: ActivatedRoute, private cookieService: CookieService, private firebase: AngularFirestore, private snackBar: MatSnackBar, public global: GlobalService) {
+  constructor(private fs: FirestoreService, public router: Router, public route: ActivatedRoute, 
+    private cookieService: CookieService, private firebase: AngularFirestore, 
+    private snackBar: MatSnackBar, public global: GlobalService) {
 
     if(history.state.data != undefined ){
       //Comprobamos si se han pasado los parámetros por la url.
 
       this.set=history.state.data.set;//Cogemos el set de la url
       this.playerNpc=history.state.data.npc;//Cogemos el personaje de la url
-      //Creamos una cookie TODO:generar los id de las cookies
     }
     else{
       if(this.cookieService.get('gameid')==""){

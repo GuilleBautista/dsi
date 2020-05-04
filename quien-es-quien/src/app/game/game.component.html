@@ -13,16 +13,19 @@
 
         <!-- Character image -->
         <img  class= "characterPic" src="{{npc.url}}" (click)='onClickNpc(i, j);'>
-
       </ng-container>
+      <br>
     </ng-container>
     
   </div>
 
-  <h2 class="room">SALA 123</h2>
+  <h2 *ngIf="game!=undefined" class="room">SALA {{game.room}}</h2>
   <button *ngIf="selecting==false" class="buttonResolve" mat-raised-button (click)="openSnackBar(); toggleSelecting()">RESOLVER</button>
   <button *ngIf="selecting==true" class="buttonResolve" mat-raised-button (click)='toggleSelecting()'>CANCEL</button>
 
+  <img class="playerNpc" src="{{playerNpc}}">
+
+  <img *ngIf="debug==true" class="goal" src="{{goal}}">
 
   <div class="chat">
     <h1 class="titleChat">CHAT</h1>
@@ -38,17 +41,6 @@
       <img class="send" src="/assets/img/send.svg" (click)="sendMsg()">
     </div>
   </div>
-
-
-
-    <p>Jugador:</p>
-    <img class="playerNpc" src="{{playerNpc}}">
-
-    <ng-container>
-      <p>Objetivo</p>
-      <img *ngIf="debug==true" class="goal" src="{{goal}}">
-    </ng-container>
-
 
 </div>
 

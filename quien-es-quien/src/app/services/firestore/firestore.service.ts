@@ -70,6 +70,11 @@ public updateGame(data:Game){
   return this.afsG.doc(data.idGame).set(Object.assign({}, data));
 }
 
+//Devuelve una lista de salas con ese id (deberia haber solo una)
+public getRooms(room:string) : Observable<any>{
+  return this.firestore.collection('game',ref=>ref.where("room", "==", room)).valueChanges()
+}
+
 
 
 
