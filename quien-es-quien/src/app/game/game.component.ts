@@ -4,7 +4,7 @@ import { firestore } from 'firebase';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import * as firebase from 'firebase';
 
-import { Game } from '../game';
+import { Game } from '../clases/game';
 import { GlobalService } from '../services/global/global.service';
 
 

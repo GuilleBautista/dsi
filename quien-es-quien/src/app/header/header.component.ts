@@ -7,7 +7,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { FirestoreService } from '../services/firestore/firestore.service';
 
 import { cookie_time } from '../global';
-import { User } from '../user';
+import { User } from '../clases/user';
 
 @Component({
   selector: 'app-header',

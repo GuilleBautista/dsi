@@ -4,7 +4,7 @@ import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog
 import { Router, ActivatedRoute } from '@angular/router';
 
 //Tipos de datos
-import { User } from '../user';
+import { User } from '../clases/user';
 import { cookie_time } from '../global';
 import { Subscription } from 'rxjs';
 

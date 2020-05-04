@@ -11,8 +11,8 @@ import { SesionData } from 'src/app/clases/sesiondata';
 import { cookie_time } from '../../global';
 
 
-import { User } from '../../user';
-import { Game } from '../../game';
+import { User } from '../../clases/user';
+import { Game } from '../../clases/game';
 
 
 

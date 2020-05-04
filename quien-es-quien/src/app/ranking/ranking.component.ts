@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FirestoreService } from '../services/firestore/firestore.service';
-import { User } from '../user';
+import { User } from '../clases/user';
 import { Subscription } from 'rxjs';
 
 @Component({

@@ -4,7 +4,7 @@ import { FirestoreService } from '../services/firestore/firestore.service';
 import { GlobalService } from '../services/global/global.service';
 import { CookieService } from 'ngx-cookie-service';
 
-import { Game } from '../game';
+import { Game } from '../clases/game';
 
 import { cookie_time } from '../global';
 
