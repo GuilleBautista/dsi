@@ -23,6 +23,6 @@ export class Game
 
     constructor(obj?:IGame){
       if(obj!=undefined) Object.assign(this, obj);
-      
+      //Generamos una sala aleatoria, en el futuro se hara de otra forma
     }
 }

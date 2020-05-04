@@ -43,11 +43,14 @@ export class GameComponent implements OnInit {
   private afs:AngularFirestoreCollection<Game>;
   public game: Game;
 
+  public player:string;
+
 
   constructor(private fs: FirestoreService, public router: Router, public route: ActivatedRoute,
     private cookieService: CookieService, private firebase: AngularFirestore,
     private snackBar: MatSnackBar, public global: GlobalService) {
 
+    //-------------------------Deprecated-------------------------------- 
     if(history.state.data != undefined ){
       //Comprobamos si se han pasado los parámetros por la url.
 
@@ -68,7 +71,9 @@ export class GameComponent implements OnInit {
       }
       else{
       }
+
     }
+    //-------------------------Deprecated-------------------------------- 
 
 
 
@@ -88,10 +93,15 @@ export class GameComponent implements OnInit {
       }
     }
 
+    //Cargamos la imagen de la x para tachar personajes
     this.fs.getImg("img/x.svg").subscribe(url=>{
       this.x_picture=url;
     });
 
+    //Cargamos el turno del jugador
+    this.player=this.cookieService.get("player");
+
+    alert("eres el jugador "+this.player)
 
 
     this.newMsg="";
@@ -123,7 +133,7 @@ export class GameComponent implements OnInit {
 
     //Actualizamos los datos de la colección game de firebase con onSnapshot
     this.firebase.firestore.collection('game').onSnapshot(snapshot =>{
-      console.log(snapshot.docChanges());
+      //console.log(snapshot.docChanges());
       //Cambios de la colección
       let changes = snapshot.docChanges();
       //Recorro las partidas dentro de game
@@ -137,8 +147,8 @@ export class GameComponent implements OnInit {
        if (change.doc.data().idGame == this.game.idGame) {
 
          this.chat = [];
-          console.log(change.doc.data());
-          console.log(change.doc.data().chat);
+          //console.log(change.doc.data());
+          //console.log(change.doc.data().chat);
 
           //Compruebo si tengo mensajes del otro jugador
           for (let m = 0; m < change.doc.data().chat.length; m+=2) {
@@ -270,16 +280,10 @@ export class GameComponent implements OnInit {
   //Función para añadir al array del chat un nuevo mensaje que hemos escrito
   public sendMsg(){
 
-    if (this.global.actualUser.id == this.game.id_creator) {
-      this.game.chat.push("0");
-      this.game.chat.push(this.newMsg);
+    //El propio jugador sabe si es el p0 o el p1
+    this.game.chat.push(this.player);
+    this.game.chat.push(this.newMsg);
 
-    }
-    else if(this.global.actualUser.id == this.game.id_joined){
-      this.game.chat.push("1");
-      this.game.chat.push(this.newMsg);
-
-    }
     this.newMsg="";
     this.fs.updateGame(this.game);
   }
