@@ -44,8 +44,8 @@ export class GameComponent implements OnInit {
   public game: Game;
 
 
-  constructor(private fs: FirestoreService, public router: Router, public route: ActivatedRoute, 
-    private cookieService: CookieService, private firebase: AngularFirestore, 
+  constructor(private fs: FirestoreService, public router: Router, public route: ActivatedRoute,
+    private cookieService: CookieService, private firebase: AngularFirestore,
     private snackBar: MatSnackBar, public global: GlobalService) {
 
     if(history.state.data != undefined ){
@@ -127,7 +127,12 @@ export class GameComponent implements OnInit {
       //Cambios de la colección
       let changes = snapshot.docChanges();
       //Recorro las partidas dentro de game
+
+
       changes.forEach(change => {
+        console.log(change.doc.data().idGame);
+        console.log("mi game" + this.game.idGame);
+
       //Si encuentro una partida con el mismo id que mi partida actual accedo a ella
        if (change.doc.data().idGame == this.game.idGame) {
 
@@ -202,7 +207,7 @@ export class GameComponent implements OnInit {
 
     return result;
   }
- 
+
 
   //----------------------------Interaccion con el tablero:--------------------------------
 

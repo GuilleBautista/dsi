@@ -41,7 +41,8 @@ export class PrincipalPageComponent implements OnInit {
   //Función para crear una nueva partida
   public async newGame(){
 
-    this.game = new Game(this.global.actualUser.id, "", "", "", 0, [], "");
+    //this.game = new Game(this.global.actualUser.id, "", "", "", 0, [], "");
+    this.game = new Game();
     let id = await this.fs.createGame(this.game);
 
     //Creamos la cookie partida para guardar el id de la nueva partida

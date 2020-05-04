@@ -1,24 +1,25 @@
 <!-- Header -->
 <app-header ></app-header>
 
-<p class="title">SELECTOR DE NPC</p>
 
-<!-- Tablero -->
-<div class="table">
+<div class="npcSelector">
 
-  <ng-container *ngFor="let row of matrix;" >
-    <ng-container *ngFor="let npc of row;">
-      <!-- Character image -->
-      <img  class= "characterPic" src="{{npc.url}}" (click)='select(npc.url);'>
-    
+  <p class="titleNpcSelector">Elige tu personaje misterioso</p>
+
+  <!-- Tablero -->
+  <div class="setSelected">
+
+    <ng-container *ngFor="let row of matrix;" >
+      <ng-container *ngFor="let npc of row;">
+        <!-- Character image -->
+        <img  class= "characterPic" src="{{npc.url}}" (click)='select(npc.url);'>
+
+      </ng-container>
+      <br>
     </ng-container>
-    <br>
-  </ng-container>
 
+  </div>
 </div>
-
-
-{{set}}
 
 <!-- Footer -->
 <app-footer></app-footer>

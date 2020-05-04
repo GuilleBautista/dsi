@@ -15,7 +15,7 @@
     <div class="divUser" *ngFor="let i of users">
 
         <div class= "divUserPhotoRank">
-          <img class="userPhotoRanking"src="assets/img/profilePhotoEx.jpeg">
+          <img class="userPhotoRanking"src="{{i.profilePhotoURL}}">
         </div>
         <p class="usernameRanking"> {{i.username}} </p>
         <p class="levelRanking"> NIVEL {{i.level}} </p>
