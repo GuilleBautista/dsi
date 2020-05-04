@@ -88,22 +88,51 @@
 }
 
 .msg{
-  position: relative;
   width: 50%;
   height: 4%;
-  top: 55%;
-  left: 46%;
+
   margin-top: 2%;
   padding-right: 1%;
   padding-top: 2%;
   background-color: white;
   font-size: 160%;
   text-align: right;
+
 }
 
 .msgRight{
+  position: relative;
   
   color: red;
+  left:49%;
+
+  width: 50%;
+  height: 4%;
+
+  margin-top: 2%;
+  padding-right: 1%;
+  padding-top: 2%;
+  background-color: white;
+  font-size: 160%;
+  text-align: right;
+
+
+}
+.msgLeft{
+  position: relative;
+
+  color:black;
+  left:1%;
+
+  width: 50%;
+  height: 4%;
+
+  margin-top: 2%;
+  padding-right: 1%;
+  padding-top: 2%;
+  background-color: white;
+  font-size: 160%;
+  text-align: right;
 
 }
 

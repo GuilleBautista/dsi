@@ -53,6 +53,7 @@ export class FirestoreService {
 
 public createGame(data: Game):Promise<string>{
   data.idGame=this.firestore.createId();
+  console.log("sala: ",data.room)
   return this.afsG.doc(data.idGame).set({... data}).then(r=>{
     return data.idGame;
   });

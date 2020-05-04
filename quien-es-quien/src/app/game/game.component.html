@@ -31,9 +31,16 @@
     <h1 class="titleChat">CHAT</h1>
 
 
-    <div *ngFor="let m of chat" class="msg">
-      <p *ngIf="m[0]==0" class="msgRight"> {{m[1]}} </p>
-    </div>
+    <ng-container *ngFor="let m of chat">
+
+      <div *ngIf="m[0]==player" class="msgRight"> 
+        <p>{{m[1]}}</p> 
+      </div>
+      <div *ngIf="m[0]!=player" class="msgLeft"> 
+        <p>{{m[1]}}</p> 
+      </div>
+
+    </ng-container>
 
 
     <input type="text" class="inputChat" [(ngModel)]="newMsg">

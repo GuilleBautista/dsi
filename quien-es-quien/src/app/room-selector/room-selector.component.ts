@@ -3,6 +3,7 @@ import { FirestoreService } from '../services/firestore/firestore.service';
 import { cookie_time } from '../global';
 import { CookieService } from 'ngx-cookie-service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { GlobalService } from '../services/global/global.service';
 
 @Component({
   selector: 'app-room-selector',
@@ -11,7 +12,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 })
 export class RoomSelectorComponent implements OnInit {
 
-  constructor(private fs: FirestoreService, private cookieService: CookieService, public router: Router, public route: ActivatedRoute) {
+  constructor(private fs: FirestoreService, private cookieService: CookieService, public router: Router, 
+    public route: ActivatedRoute, private global:GlobalService) {
 
    }
 
@@ -23,6 +25,13 @@ export class RoomSelectorComponent implements OnInit {
 
     this.fs.getRooms(room).subscribe(r=>{
       this.cookieService.set("cookieGame", r[0].idGame, cookie_time);
+
+      //El jugador que se une jugara primero
+      this.cookieService.set("player", "0", cookie_time)
+
+      this.global.renewCookies(this.cookieService);
+
+      // Con la cookie cambiada redirigimos a la partida
       this.router.navigate(['/game']);
     });    
     
