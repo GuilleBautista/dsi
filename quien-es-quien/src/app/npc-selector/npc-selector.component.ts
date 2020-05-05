@@ -102,10 +102,12 @@ export class NpcSelectorComponent implements OnInit {
       la reenvia a través de la URL de la pagina al componente del juego.
   */
   public select(url:string){  
+    let player=history.state.data.player;
     //creamos una estructura de datos para pasar por la url
     let data={
       npc: url, //npc:string contiene la url del personaje elegido, 
-      set: this.set //set:number contiene el set elegido anteriormente
+      set: this.set, //set:number contiene el set elegido anteriormente
+      player:player  //player:string contiene el id del jugador, 0 o 1
       }
     this.router.navigate(['/game'], 
       { 

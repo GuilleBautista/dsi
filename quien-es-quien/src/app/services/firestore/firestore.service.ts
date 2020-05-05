@@ -52,8 +52,8 @@ export class FirestoreService {
 //Funciones partida
 
 public createGame(data: Game):Promise<string>{
-  data.idGame=this.firestore.createId();
-  console.log("sala: ",data.room)
+  data.idGame='1';
+  console.log("partida:", data)
   return this.afsG.doc(data.idGame).set({... data}).then(r=>{
     return data.idGame;
   });

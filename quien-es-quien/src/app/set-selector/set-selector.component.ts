@@ -41,7 +41,9 @@ export class SetSelectorComponent implements OnInit {
   select(id:string){
     //Creamos una estructura de datos para devolver
     let data={
-      set: id   
+      set: id,
+      //Si esta eligiendo set es el jugador 1
+      player:"1"   
     }
     this.router.navigate(['/npc-selector'],
       { state: { data: data }}   // No se muestran en la URL
