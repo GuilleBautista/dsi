@@ -29,11 +29,14 @@ export class GameComponent implements OnInit {
   public default:boolean=false;
   public selecting:boolean=false;
   public x_picture:string;
+  private sent:boolean=false;
+  private first_connection:boolean=true;
 
   //Datos de la partida de la bbdd
   public game: Game;
   public player:string;
   public playerNpc:string;
+  public chat:Array<Array<string>>;
 
 
   constructor(private fs: FirestoreService, public router: Router, public route: ActivatedRoute, 
@@ -55,6 +58,9 @@ export class GameComponent implements OnInit {
         this.matrix[i].push(npc);
       }
     }
+
+    //Inicializamos el chat
+    this.chat=[];
 
     //Guardamos el id de la partida actual en una variable temporal
     let gameid=this.cookieService.get("cookieGame")  
@@ -101,10 +107,8 @@ export class GameComponent implements OnInit {
         //Obtenemos las imagenes de la base de datos
         this.initializeMatrix();
 
-        //Creamos una subscripcion a los cambios en la partida de la bbdd
-        this.firebase.firestore.collection('game').doc(this.game.idGame).onSnapshot(snapshot=>{
-          console.log("snapshot data: ",snapshot.data())
-        })
+        //Creamos una subscripcion de la partida a la bbdd
+        this.watchChanges();
 
         this.cookieService.set("cookieGame", this.game.idGame, cookie_time);
         
@@ -115,6 +119,8 @@ export class GameComponent implements OnInit {
       this.fs.getGame(gameid).then(game=>{
       this.game=game as Game;
       this.player=this.cookieService.get("player");
+      this.cookieService.set("player", this.player, cookie_time);
+
 
       if(this.player=="0"){
         this.playerNpc=this.game.character_joined;
@@ -125,11 +131,8 @@ export class GameComponent implements OnInit {
       //Obtenemos las imagenes de la base de datos
       this.initializeMatrix();
 
-
-      //Creamos una subscripcion a los cambios en la partida de la bbdd
-      this.firebase.firestore.collection('game').doc(this.game.idGame).onSnapshot(snapshot=>{
-        console.log("snapshot data: ",snapshot.data())
-      })
+      //Creamos una subscripcion de la partida a la bbdd
+      this.watchChanges();
      
 
     }).catch(error=>{
@@ -143,7 +146,9 @@ export class GameComponent implements OnInit {
       this.cookieService.set("cookieGame", this.game.idGame, cookie_time);
 
     }
-    this.cookieService.set("player", this.player, cookie_time);
+    if(this.player!=undefined){
+      this.cookieService.set("player", this.player, cookie_time);
+    }
     this.global.renewCookies(this.cookieService);
 
     //Cargamos la imagen de la x para tachar personajes
@@ -153,8 +158,6 @@ export class GameComponent implements OnInit {
 
     //Cargamos el turno del jugador
     console.log("eres el jugador "+this.player)
-
-
 
    }
 
@@ -194,6 +197,43 @@ export class GameComponent implements OnInit {
       })
   }
 
+  /*  
+  * Funcion para subscribir al componente a los cambios en la base de datos
+  * El objetivo de la funcion es ver los cambios en el chat
+  */
+  private watchChanges(){
+    //Creamos una subscripcion a los cambios en la partida de la bbdd
+    let msg="";
+    let foe="";
+
+    this.firebase.firestore.collection('game').doc(this.game.idGame).onSnapshot(snapshot=>{
+      console.log("snapshot data: ",snapshot.data())
+     
+      if(!this.sent && !this.first_connection){
+
+        if(this.player=="0"){
+          //TODO: solo coger un parametro
+          msg=snapshot.data().chat1[snapshot.data().chat1.length-1];
+          foe="1";
+        }else{
+          //TODO: no guardar la lista completa
+          msg=snapshot.data().chat0[snapshot.data().chat0.length-1];
+          foe="0";
+        }
+        
+        if(msg!=undefined && msg!=""){
+          console.log(msg);
+          this.chat.push([foe, msg]);
+        }
+      }
+      else{
+        this.sent=false;
+        this.first_connection=false;
+      }
+
+    })
+  }
+
   /*
   * Recibe:
   *   msg:string mensaje a mandar
@@ -204,14 +244,18 @@ export class GameComponent implements OnInit {
   */
   private sendMsg(msg:string){
 
-  if(this.player=="0"){
-    this.game.chat0.push(msg);
-  }else{
-    this.game.chat1.push(msg);
-  }
-  //TODO: actualizar solo el chat
-  this.fs.updateGame(this.game);
- 
+    console.log("player: ", this.player)
+
+    if(this.player=="0"){
+      this.game.chat0.push(msg);
+    }else{
+      this.game.chat1.push(msg);
+    }
+    //TODO: actualizar solo el chat
+    this.fs.updateGame(this.game);
+    
+    //TODO: apendear el mensaje como local
+    this.chat.push( [this.player, msg] )
   }
 
   //Devuelve la url del personaje del oponente
@@ -268,6 +312,7 @@ export class GameComponent implements OnInit {
     //Cargamos el mensaje del formulario
     const msg=event.target.firstChild.value;
     //Enviamos el mensaje
+    this.sent=true;
     this.sendMsg(msg);
     
 
