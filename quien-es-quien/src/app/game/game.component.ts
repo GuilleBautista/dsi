@@ -45,7 +45,7 @@ export class GameComponent {
     private cookieService: CookieService, private firebase: AngularFirestore, 
     private snackBar: MatSnackBar, public global: GlobalService,
     public dialogW: MatDialog, public dialogT: MatDialog, public dialogL: MatDialog) {
-    
+
     //Inicializamos una matriz de personajes
     this.matrix=[];
     for(let i=0; i<height; i++){
@@ -85,7 +85,7 @@ export class GameComponent {
   
   
       }
-      else{//Si se han recibido datos se cargan y se crea una partida
+      else if(this.cookieService.get("player")=="1"){//Si se han recibido datos y eres el jugador 1 se cargan y se crea una partida
         
         let set=history.state.data.set;//Cogemos el set de la url
         this.playerNpc=history.state.data.npc;//Cogemos el personaje de la url
@@ -116,6 +116,44 @@ export class GameComponent {
         this.watchChanges();
 
         this.cookieService.set("cookieGame", this.game.idGame, cookie_time);
+        
+      }
+      else{//Si es tu primera vez y eres el jugador 0
+        let set=history.state.data.set;//Cogemos el set de la url
+        this.playerNpc=history.state.data.npc;//Cogemos el personaje de la url
+        this.player=history.state.data.player;//Cogemos el jugador de la url
+        gameid=history.state.data.gameid;
+       
+        this.fs.getGame(gameid).then(game=>{
+          //Creamos una nueva partida con los datos de la url
+          this.game=new Game({
+            id_creator: game.id_creator,
+            id_joined:  this.cookieService.get("uid"),
+            set:  set,
+            character_creator: game.character_creator,
+            character_joined: this.playerNpc,
+            chat0:  "'El jugador 2 se ha unido a la sala'",
+            chat1:  "",
+            //TODO: generar las salas mejor Quiza en la nube si hay tiempo?
+            room: game.room,
+            //TODO
+            idGame:"1",
+            winner:""
+          })
+
+          //Creamos la partida en la bbdd
+          this.fs.updateGame(this.game);
+
+          //Obtenemos las imagenes de la base de datos
+          this.initializeMatrix();
+
+          //Creamos una subscripcion de la partida a la bbdd
+          this.watchChanges();
+
+          this.cookieService.set("cookieGame", this.game.idGame, cookie_time);
+          this.cookieService.set("player", this.player, cookie_time);
+
+        });
         
       }
 
@@ -215,7 +253,7 @@ export class GameComponent {
 
             this.fs.deleteGame(this.game);
 
-            this.end(false);
+            this.openLoser();
           }
         }
         else{//Eventos de tipo mensaje
@@ -270,6 +308,9 @@ export class GameComponent {
 
   //Devuelve la url del personaje del oponente
   private getOponent():string{
+    console.log("this game:",this.game);
+    
+    
     if(this.player=="0"){
       return this.game.character_creator;
     }
@@ -300,15 +341,9 @@ export class GameComponent {
     else{ //Si estamos seleccionando el personaje para resolver comprobamos si es el correcto
 
       if(this.matrix[i][j].url==this.getOponent()){
-        //Has ganado
-        alert("WINNER WINNER CHICKEN DINNER !!");
-        //this.end();
         this.openWinner();
       }
       else{
-        //Has perdido
-        alert("Perdiste compañero");
-        //this.end();
         this.openTryAgain();
       }
     }
@@ -342,6 +377,7 @@ export class GameComponent {
     // Llamamos a la función 
     dialogRef.afterClosed().subscribe(result=>{
       this.increasePoints(result);
+      this.end(true);
     });
   }
 
@@ -362,6 +398,7 @@ export class GameComponent {
     });
     dialogRef.afterClosed().subscribe(result=>{
       this.reducePoints(result);
+      this.end(false);
     });
   }
 

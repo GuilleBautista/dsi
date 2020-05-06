@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FirestoreService } from '../services/firestore/firestore.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import {debugging as debug, width, height} from '../global'
+import { width, height} from '../global'
 
 
 @Component({
@@ -9,44 +9,58 @@ import {debugging as debug, width, height} from '../global'
   templateUrl: './npc-selector.component.html',
   styleUrls: ['./npc-selector.component.scss']
 })
-export class NpcSelectorComponent implements OnInit {
+export class NpcSelectorComponent {
 
   //Matriz para el tablero
   public matrix:Array<Array<any>>;
   public set:number;
+  public gameid:string;
   public x_picture:string;
 
   constructor(private fs: FirestoreService, public router: Router, public route: ActivatedRoute) {
+    
+     //Inicializamos una matriz de personajes
+     this.matrix=[];
+     for(let i=0; i<height; i++){
+       this.matrix.push([]);
+       for(let j=0; j<width; j++){
+ 
+         let npc={
+           "url": "",
+           "state":0
+         };
+ 
+         this.matrix[i].push(npc);
+       }
+     }
+    
+    
     //Comprobamos si se han pasado los datos por la url
     if(history.state.data == undefined){
-       //Si estamos debugeando aceptamos los valores por defecto.
-       if(!debug){
-        //Si no recibimos datos vamos a la pagina principal
-        this.router.navigate(['/principalpage']);
-      }
-      else{
-        //Default values
-        this.set=Math.floor(Math.random()*3);
-      }
+      //Si los datos son undefined damos error
+      console.log("ERROR");
+
     }
-    else{
+    else if(history.state.data.set!=undefined){
       //Cogemos el set de la url
       this.set=history.state.data.set;
+      console.log(this.set);
+
+      this.initializeMatrix();
+
     }
+    
+    //Si venimos del room-selector
+    if(history.state.data.gameid!=undefined){
+      this.gameid=history.state.data.gameid;
 
-    //Inicializamos una matriz de personajes
-    this.matrix=[];
-    for(let i=0; i<height; i++){
-      this.matrix.push([]);
-      for(let j=0; j<width; j++){
+      this.fs.getGame(this.gameid).then(game=>{
+        this.set=game.set;
+        
+        this.initializeMatrix();
 
-        let npc={
-          "url": "",
-          "state":0
-        };
+      })
 
-        this.matrix[i].push(npc);
-      }
     }
 
     //Guardamos la url de la X para tachar los personajes
@@ -56,11 +70,6 @@ export class NpcSelectorComponent implements OnInit {
 
    }
 
-  ngOnInit(): void {
-
-    this.initializeMatrix();
-
-  }
 
   /*
   Funcion para dar valor a las imagenes de los personajes de la matriz.
@@ -102,13 +111,19 @@ export class NpcSelectorComponent implements OnInit {
       la reenvia a través de la URL de la pagina al componente del juego.
   */
   public select(url:string){  
-    let player=history.state.data.player;
+    let player="0";
+    if(history.state.data!=undefined){
+      player=history.state.data.player;
+    }
     //creamos una estructura de datos para pasar por la url
     let data={
       npc: url, //npc:string contiene la url del personaje elegido, 
       set: this.set, //set:number contiene el set elegido anteriormente
-      player:player  //player:string contiene el id del jugador, 0 o 1
+      player:player,  //player:string contiene el id del jugador, 0 o 1
+      gameid:this.gameid
       }
+    
+      
     this.router.navigate(['/game'],
       {
         state: { data: data }//Pasamos los datos por la url

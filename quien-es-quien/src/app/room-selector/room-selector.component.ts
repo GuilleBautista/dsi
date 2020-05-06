@@ -30,15 +30,22 @@ export class RoomSelectorComponent implements OnDestroy {
     const room=event.target.firstChild.value;
 
     this.subsc =  this.fs.getRooms(room).subscribe(r=>{
-      this.cookieService.set("cookieGame", r[0].idGame, cookie_time);
-
-      //El jugador que se une jugara primero
-      this.cookieService.set("player", "0", cookie_time)
+      
+      //creamos una estructura de datos para pasar por la url
+      let data={
+        player:"0",  //player:string contiene el id del jugador, 0 o 1
+        gameid: r[0].idGame
+      }
 
       this.global.renewCookies(this.cookieService);
 
-      // Con la cookie cambiada redirigimos a la partida
-      this.router.navigate(['/npc-selector']);
+      this.router.navigate(['/npc-selector'],
+        {
+          state: { data: data }//Pasamos los datos por la url
+  
+        }   
+      );
+
     });
 
   }
