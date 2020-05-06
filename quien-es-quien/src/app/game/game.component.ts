@@ -59,13 +59,14 @@ export class GameComponent implements OnInit {
       }
     }
 
-    //Inicializamos el chat
+    //Inicializamos el chat local
     this.chat=[];
 
     //Guardamos el id de la partida actual en una variable temporal
     let gameid=this.cookieService.get("cookieGame")  
 
-    if(gameid==""){ //Comprobamos si estaba en una partida
+    //Comprobamos si estaba en una partida
+    if(gameid==""){ //Si no lo estaba creamos una nueva
       
       //Si no estamos en una partida comprobamos si hemos recibido datos de la url
       if (history.state.data == undefined){
@@ -94,12 +95,13 @@ export class GameComponent implements OnInit {
           set:  set,
           character_creator:  this.playerNpc,
           character_joined: "",
-          chat0:  [],
-          chat1:  [],
+          chat0:  "",
+          chat1:  "",
           //TODO: generar las salas mejor Quiza en la nube si hay tiempo?
           room: (Math.floor(Math.random()*1000000)).toString(),
           //TODO
-          idGame:"1"
+          idGame:"1",
+          winner:""
         })
         //Creamos la partida en la bbdd
         this.fs.createGame(this.game);
@@ -156,9 +158,6 @@ export class GameComponent implements OnInit {
       this.x_picture=url;
     });
 
-    //Cargamos el turno del jugador
-    console.log("eres el jugador "+this.player)
-
    }
 
 
@@ -207,24 +206,37 @@ export class GameComponent implements OnInit {
     let foe="";
 
     this.firebase.firestore.collection('game').doc(this.game.idGame).onSnapshot(snapshot=>{
-      console.log("snapshot data: ",snapshot.data())
-     
+      //Si el cambio no es un mensaje nuestro o nuestra primera conexión
       if(!this.sent && !this.first_connection){
 
-        if(this.player=="0"){
-          //TODO: solo coger un parametro
-          msg=snapshot.data().chat1[snapshot.data().chat1.length-1];
-          foe="1";
-        }else{
-          //TODO: no guardar la lista completa
-          msg=snapshot.data().chat0[snapshot.data().chat0.length-1];
-          foe="0";
+        //Comprobamos si el cambio ha sido de tipo ganador
+        if(snapshot.data().winner!=""){
+
+          //Si el ganador no somos nosostros esque hemos perdido
+          if(snapshot.data().winner!=this.player){
+            console.log("has perdido bro");
+          }
+          this.fs.deleteGame(this.game);
+          this.end(false);
+        }
+        else{//Eventos de tipo mensaje
+
+          if(this.player=="0"){
+                    
+            msg=snapshot.data().chat1;
+            foe="1";
+          }else{
+
+            msg=snapshot.data().chat0;
+            foe="0";
+          }
+
+          if(msg!=undefined && msg!=""){
+            console.log(msg);
+            this.chat.push([foe, msg]);
+          }
         }
         
-        if(msg!=undefined && msg!=""){
-          console.log(msg);
-          this.chat.push([foe, msg]);
-        }
       }
       else{
         this.sent=false;
@@ -247,11 +259,11 @@ export class GameComponent implements OnInit {
     console.log("player: ", this.player)
 
     if(this.player=="0"){
-      this.game.chat0.push(msg);
+      this.game.chat0=msg;
     }else{
-      this.game.chat1.push(msg);
+      this.game.chat1=msg;
     }
-    //TODO: actualizar solo el chat
+    
     this.fs.updateGame(this.game);
     
     //TODO: apendear el mensaje como local
@@ -292,7 +304,7 @@ export class GameComponent implements OnInit {
       if(this.matrix[i][j].url==this.getOponent()){
         //Has ganado
         alert("WINNER WINNER CHICKEN DINNER !!");
-        this.end();
+        this.end(true);
       }
       else{
         //Has perdido
@@ -322,9 +334,22 @@ export class GameComponent implements OnInit {
   //----------------------------Funciones del juego----------------------------
 
   //Funcion a ejecutar cuando acaba la partida
-  private end(){
-    //TODO: Cambiar el estado de winer en la bbdd (y crear winer)
-    //this.router.navigate(['/principalpage']);
+  private end(win:boolean){
+    if(win){
+      this.game.winner=this.player;
+    }
+
+    this.fs.updateGame(this.game);
+
+    //Eliminamos las cookies de la partida
+    let uid = this.cookieService.delete("player");
+    let page = this.cookieService.delete("cookieGame");
+    //Renovamos el resto
+    this.global.renewCookies(this.cookieService);
+
+    //Devolvemos al usuario a la pagina principal
+    this.cookieService.set("page", '/principalpage', cookie_time);
+    this.router.navigate(['/principalpage']);
   }
 
   //Función que muestra mensaje cuando pulsas en el botón de 'RESOLVER'
