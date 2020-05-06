@@ -25,7 +25,7 @@
 
   <img class="playerNpc" src="{{playerNpc}}">
 
-  <img *ngIf="debug==true" class="goal" src="{{goal}}">
+  <img *ngIf="debug==true" class="goal" src="{{playerNpc}}">
 
   <div class="chat">
     <h1 class="titleChat">CHAT</h1>
@@ -42,11 +42,13 @@
 
     </ng-container>
 
+    <form (ngSubmit)="getMsg($event)">
+        
+      <input matInput placeholder="123" class="inputNum" required>
 
-    <input type="text" class="inputChat" [(ngModel)]="newMsg">
-    <div class="divSend">
-      <img class="send" src="/assets/img/send.svg" (click)="sendMsg()">
-    </div>
+      <button class="buttonA" mat-raised-button type="submit">Aceptar</button>
+    </form>
+
   </div>
 
 </div>

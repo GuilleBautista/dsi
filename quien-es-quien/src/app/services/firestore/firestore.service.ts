@@ -52,8 +52,8 @@ export class FirestoreService {
 //Funciones partida
 
 public createGame(data: Game):Promise<string>{
-  data.idGame=this.firestore.createId();
-  console.log("sala: ",data.room)
+  data.idGame='1';
+  console.log("partida:", data)
   return this.afsG.doc(data.idGame).set({... data}).then(r=>{
     return data.idGame;
   });
@@ -76,7 +76,13 @@ public getRooms(room:string) : Observable<any>{
   return this.firestore.collection('game',ref=>ref.where("room", "==", room)).valueChanges()
 }
 
-
+/*
+  * Delete a game
+  * Called after someone wins
+  */
+public deleteGame(game:Game):void{
+  this.afsG.doc(game.idGame).delete();
+}
 
 
 
@@ -158,7 +164,7 @@ public getRooms(room:string) : Observable<any>{
     .where('cre_date', '<', expiring_time)).valueChanges().subscribe(result=>{
       for(let sesion of result){
         //Las eliminamos una a una
-        this.deleteSesion(sesion.id);
+        //this.deleteSesion(sesion.id);
       }
     });
 
@@ -188,13 +194,7 @@ public getRooms(room:string) : Observable<any>{
 
   }
 
-  /*
-  Delete a sesion
-  Called after window closes
-  */
-  public deleteSesion(sesion_id:string):void{
-    this.sesion_cookies.doc(sesion_id).delete();
-  }
+  
 
 //-------------------------Storage Functions-------------------------
 

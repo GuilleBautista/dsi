@@ -16,69 +16,36 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 
 import { Router, ActivatedRoute } from '@angular/router';
-import {debugging as debug, height, width} from '../global';
+import {debugging as debug, height, width, cookie_time} from '../global';
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.scss']
 })
-export class GameComponent implements OnInit {
+export class GameComponent {
 
-  //Matriz para el tablero
+  //Componentes locales de la partida
   public matrix:Array<Array<any>>;
-  public set:number=0;
-  public playerNpc:string;
-  public x_picture:string;
-  public goal:string="";
-
-  public selecting:boolean=false;
-
   public debug:boolean=debug;
   public default:boolean=false;
-  //El objetivo por defecto es yasmin. TODO: conseguir el objetivo de una forma mejor
+  public selecting:boolean=false;
+  public x_picture:string;
+  private sent:boolean=false;
+  private first_connection:boolean=true;
 
-
-
-  public chat:Array<any>;
-  public newMsg:string;
-  private afs:AngularFirestoreCollection<Game>;
+  //Datos de la partida de la bbdd
   public game: Game;
-
   public player:string;
+  public playerNpc:string;
+  public chat:Array<Array<string>>;
 
 
-  constructor(private fs: FirestoreService, public router: Router, public route: ActivatedRoute,
-    private cookieService: CookieService, private firebase: AngularFirestore,
-    private snackBar: MatSnackBar, public dialogW: MatDialog, public dialogT: MatDialog, public dialogL: MatDialog, public global: GlobalService) {
-
-    //-------------------------Deprecated--------------------------------
-    if(history.state.data != undefined ){
-      //Comprobamos si se han pasado los parámetros por la url.
-
-      this.set=history.state.data.set;//Cogemos el set de la url
-      this.playerNpc=history.state.data.npc;//Cogemos el personaje de la url
-    }
-    else{
-      if(this.cookieService.get('gameid')==""){
-        //Si estamos debugeando aceptamos los valores por defecto.
-        if(!debug){
-          //Si no recibimos datos vamos a la pagina principal
-          this.router.navigate(['/principalpage']);
-        }
-        else{
-          this.default=true;
-        }
-
-      }
-      else{
-      }
-
-    }
-    //-------------------------Deprecated--------------------------------
-
-
-
+  constructor(private fs: FirestoreService, public router: Router, public route: ActivatedRoute, 
+    private cookieService: CookieService, private firebase: AngularFirestore, 
+    private snackBar: MatSnackBar, public global: GlobalService,
+    public dialogW: MatDialog, public dialogT: MatDialog, public dialogL: MatDialog) {
+    
     //Inicializamos una matriz de personajes
     this.matrix=[];
     for(let i=0; i<height; i++){
@@ -95,110 +62,128 @@ export class GameComponent implements OnInit {
       }
     }
 
+    //Inicializamos el chat local
+    this.chat=[];
+
+    //Guardamos el id de la partida actual en una variable temporal
+    let gameid=this.cookieService.get("cookieGame")  
+
+    //Comprobamos si estaba en una partida
+    if(gameid==""){ //Si no lo estaba creamos una nueva
+      
+      //Si no estamos en una partida comprobamos si hemos recibido datos de la url
+      if (history.state.data == undefined){
+        //Si no se han pasado datos por la url damos error
+        console.log("ERROR: algo ha ido mal en la carga de la partida");
+
+        //Actualizamos las cookies de sesion
+        this.cookieService.set("page", '/principalpage', cookie_time);
+        this.global.renewCookies(this.cookieService);
+
+        //Redirigimos a la pagina principal
+        this.router.navigate(['/principalpage']);
+  
+  
+      }
+      else{//Si se han recibido datos se cargan y se crea una partida
+        
+        let set=history.state.data.set;//Cogemos el set de la url
+        this.playerNpc=history.state.data.npc;//Cogemos el personaje de la url
+        this.player=history.state.data.player;//Cogemos el jugador de la url
+
+        //Creamos una nueva partida con los datos de la url
+        this.game=new Game({
+          id_creator:this.cookieService.get("uid"),
+          id_joined:  "",
+          set:  set,
+          character_creator:  this.playerNpc,
+          character_joined: "",
+          chat0:  "",
+          chat1:  "",
+          //TODO: generar las salas mejor Quiza en la nube si hay tiempo?
+          room: (Math.floor(Math.random()*1000000)).toString(),
+          //TODO
+          idGame:"1",
+          winner:""
+        })
+        //Creamos la partida en la bbdd
+        this.fs.createGame(this.game);
+
+        //Obtenemos las imagenes de la base de datos
+        this.initializeMatrix();
+
+        //Creamos una subscripcion de la partida a la bbdd
+        this.watchChanges();
+
+        this.cookieService.set("cookieGame", this.game.idGame, cookie_time);
+        
+      }
+
+    } 
+    else{//Si las cookies estan inicializadas se carga la partida
+      this.fs.getGame(gameid).then(game=>{
+      this.game=game as Game;
+      this.player=this.cookieService.get("player");
+      this.cookieService.set("player", this.player, cookie_time);
+
+
+      if(this.player=="0"){
+        this.playerNpc=this.game.character_joined;
+      }else{
+        this.playerNpc=this.game.character_creator;
+      }
+
+      //Obtenemos las imagenes de la base de datos
+      this.initializeMatrix();
+
+      //Creamos una subscripcion de la partida a la bbdd
+      this.watchChanges();
+     
+
+    }).catch(error=>{
+      console.log("Error obteniendo la partida de la base de datos", error)
+    })
+    
+   
+    }
+
+    if(this.game!=undefined){
+      this.cookieService.set("cookieGame", this.game.idGame, cookie_time);
+
+    }
+    if(this.player!=undefined){
+      this.cookieService.set("player", this.player, cookie_time);
+    }
+    this.global.renewCookies(this.cookieService);
+
     //Cargamos la imagen de la x para tachar personajes
     this.fs.getImg("img/x.svg").subscribe(url=>{
       this.x_picture=url;
     });
 
-    //Cargamos el turno del jugador
-    this.player=this.cookieService.get("player");
-
-    alert("eres el jugador "+this.player)
-
-
-    this.newMsg="";
-    this.afs=this.firebase.collection('game');
-
    }
 
 
-  async ngOnInit() {
-
-    if(this.default ){
-      this.initializeMatrix(
-        this.selectRandomNpc(),
-        this.selectRandomNpc()
-      )
-    }else{
-      this.initializeMatrix(this.selectRandomNpc());
-    }
-
-    //Guardamos en id el valor de la cookieGame (id de la partida actual) y guadamos en this.game la partida de la BD con este id
-    let id = this.cookieService.get("cookieGame");
-    this.game = await this.fs.getGame(id);
-    this.game.set = this.set;
-
-    //FALTA RELLENAR LOS CAMPOS ID_JOINED, CHARACTER_CREATOR Y JOINED
-
-    this.fs.updateGame(this.game);
-
-
-    //Actualizamos los datos de la colección game de firebase con onSnapshot
-    this.firebase.firestore.collection('game').onSnapshot(snapshot =>{
-      //console.log(snapshot.docChanges());
-      //Cambios de la colección
-      let changes = snapshot.docChanges();
-      //Recorro las partidas dentro de game
-
-
-      changes.forEach(change => {
-        console.log(change.doc.data().idGame);
-        console.log("mi game" + this.game.idGame);
-
-      //Si encuentro una partida con el mismo id que mi partida actual accedo a ella
-       if (change.doc.data().idGame == this.game.idGame) {
-
-         this.chat = [];
-          //console.log(change.doc.data());
-          //console.log(change.doc.data().chat);
-
-          //Compruebo si tengo mensajes del otro jugador
-          for (let m = 0; m < change.doc.data().chat.length; m+=2) {
-              //Si encuentro un 1 en el array chat de la BD significa que en la siguiente posición tengo un mensaje del otro jugador y lo almaceno en this.chat
-              if (change.doc.data().chat[m] == "1") {
-                this.chat.push([1, change.doc.data().chat[m+1]]);
-              }
-              //Si encuentro un 0 en el array chat de la BD significa que en la siguiente posición tengo un mensaje ya enviado mío y lo almaceno en this.chat
-              else if (change.doc.data().chat[m] == "0"){
-                this.chat.push([0, change.doc.data().chat[m+1]]);
-              }
-          }
-
-       }
-
-     })
-    });
-
-
-  }
 
   //----------------------------Funciones auxiliares---------------------------------------
 
   /*
-  Funcion para dar valor a las imagenes de los personajes de la matriz.
-  Esta funcion asume que los unicos elementos que hay en la carpeta del set a acceder son las imagenes del set en cuestion.
+  * Funcion para dar valor a las imagenes de los personajes de la matriz.
+  * Esta funcion asume que los unicos elementos que hay en la carpeta del set a acceder son las imagenes del set en cuestion.
+  * Asume tambien que se ha inicializado una partida.
   */
-  private initializeMatrix(player?:any, goal?:any){
+  private initializeMatrix(){
     //Indices para recorrer la matriz
     let i=0, j=0;
 
     //Accedemos a la carpeta del set correspondiente
-    this.fs.getFiles("/characters/set"+this.set).subscribe(
+    this.fs.getFiles("/characters/set"+this.game.set).subscribe(
       result=>{
         //Cogemos todos los elementos de dentro
         for(let file of result.items){ //items para archivos, prefixes para carpetas
           file.getDownloadURL().then(url=>{
             //Asignamos a cada elemento de la matriz la url de uno de estos elementos
             this.matrix[i][j].url=url;
-
-            if(this.default){
-              if(i==player.i && j==player.j){
-                this.playerNpc=url;
-              }
-              if(i==goal.i && j==goal.j){
-                this.goal=url;
-              }
-            }
 
             i+=1;
             if(i>=4){ i=0; j+=1; }
@@ -208,16 +193,89 @@ export class GameComponent implements OnInit {
       })
   }
 
-  private selectRandomNpc():any{
-    let i= Math.floor(Math.random()*height);
-    let j= Math.floor(Math.random()*width);
+  /*  
+  * Funcion para subscribir al componente a los cambios en la base de datos
+  * El objetivo de la funcion es ver los cambios en el chat
+  */
+  private watchChanges(){
+    //Creamos una subscripcion a los cambios en la partida de la bbdd
+    let msg="";
+    let foe="";
 
-    let result={
-      i:i,
-      j:j
+    this.firebase.firestore.collection('game').doc(this.game.idGame).onSnapshot(snapshot=>{
+      //Si el cambio no es un mensaje nuestro o nuestra primera conexión
+      if(!this.sent && !this.first_connection && snapshot.data()!=undefined){
+
+        //Comprobamos si el cambio ha sido de tipo ganador
+        if(snapshot.data().winner!=""){
+
+          //Si el ganador no somos nosostros esque hemos perdido
+          if(snapshot.data().winner!=this.player){
+            console.log("has perdido bro");
+
+            this.fs.deleteGame(this.game);
+
+            this.end(false);
+          }
+        }
+        else{//Eventos de tipo mensaje
+
+          if(this.player=="0"){
+                    
+            msg=snapshot.data().chat1;
+            foe="1";
+          }else{
+
+            msg=snapshot.data().chat0;
+            foe="0";
+          }
+
+          if(msg!=undefined && msg!=""){
+            this.chat.push([foe, msg]);
+          }
+        }
+        
+      }
+      else{
+        this.sent=false;
+        this.first_connection=false;
+      }
+
+    })
+  }
+
+  /*
+  * Recibe:
+  *   msg:string mensaje a mandar
+  * Asume: 
+  *   player esta inicializado
+  * Añade a la bbdd un mensaje en el documento correspondiente a esta partida
+  * y en el chat de este jugador
+  */
+  private sendMsg(msg:string){
+
+    console.log("player: ", this.player)
+
+    if(this.player=="0"){
+      this.game.chat0=msg;
+    }else{
+      this.game.chat1=msg;
     }
+    
+    this.fs.updateGame(this.game);
+    
+    //TODO: apendear el mensaje como local
+    this.chat.push( [this.player, msg] )
+  }
 
-    return result;
+  //Devuelve la url del personaje del oponente
+  private getOponent():string{
+    if(this.player=="0"){
+      return this.game.character_creator;
+    }
+    else{
+      return this.game.character_joined;
+    }
   }
 
 
@@ -231,16 +289,17 @@ export class GameComponent implements OnInit {
     e indica al usuario si ha ganado o perdido. Tras esto acaba la partida.
   */
   public onClickNpc(i:number, j:number){
-    if(!this.selecting){
+    if(!this.selecting){//Si no estamos enviando un personaje cambiamos el estado del clicado
       if(this.matrix[i][j].state==0){
         this.matrix[i][j].state=1;
       }
       else{
         this.matrix[i][j].state=0;
       }
-    }
-    else{
-      if(this.matrix[i][j].url==this.goal){
+    }  
+    else{ //Si estamos seleccionando el personaje para resolver comprobamos si es el correcto
+
+      if(this.matrix[i][j].url==this.getOponent()){
         //Has ganado
         alert("WINNER WINNER CHICKEN DINNER !!");
         //this.end();
@@ -260,17 +319,20 @@ export class GameComponent implements OnInit {
     this.selecting=!this.selecting;
   }
 
-  //----------------------------Funciones del juego----------------------------
 
-  //Funcion a ejecutar cuando acaba la partida
-  private end(){
-    //TODO: Hacer algo mas al acabar el juego
-    this.router.navigate(['/principalpage']);
+  //Coge el mensaje del formulario y lo envia
+  public getMsg(event:any){
+    //Cargamos el mensaje del formulario
+    const msg=event.target.firstChild.value;
+    //Enviamos el mensaje
+    this.sent=true;
+    this.sendMsg(msg);
+    
+
   }
 
-
-
-  //FUNCIONES POPUPS
+ 
+  //----------------------------Funciones del juego----------------------------
 
   //Función para abrir el popup de cuando el usuario ha adivinado el personaje y gana la partida
   public openWinner(){
@@ -354,39 +416,43 @@ export class GameComponent implements OnInit {
   }
 
 
+  
 
+   //Funcion a ejecutar cuando acaba la partida
+  private end(win:boolean){
+    if(win){
+      this.game.winner=this.player;
+      this.fs.updateGame(this.game);
+      
+    }
+    this.sent=true;
+
+    //Eliminamos las cookies de la partida
+    this.cookieService.delete("player");
+    this.cookieService.delete("cookieGame");
+
+    //Devolvemos al usuario a la pagina principal
+    this.cookieService.set("page", '/principalpage', cookie_time);
+    this.cookieService.set("uid", this.cookieService.get("uid"), cookie_time);
+
+
+    this.router.navigate(['/principalpage']);
+  }
 
   //Función que muestra mensaje cuando pulsas en el botón de 'RESOLVER'
   public openSnackBar() {
-     this.snackBar.open("Selecciona el personaje misterioso que crees que tiene tu rival", "", {
-       duration: 8000,
-   });
-
+    this.snackBar.open("Selecciona el personaje misterioso que crees que tiene tu rival", "", {
+      duration: 8000,
+    });
   }
 
-  //Función que muestra mensaje cuando pulsas en el botón de 'CANCELAR'
+ //Función que muestra mensaje cuando pulsas en el botón de 'CANCELAR'
   public openSnackBar2() {
-     this.snackBar.open("Has salido del modo resolver", "", {
-       duration: 4000,
-   });
-
+    this.snackBar.open("Has salido del modo resolver", "", {
+      duration: 4000,
+    });
   }
 
-
-
-
-
-
-  //Función para añadir al array del chat un nuevo mensaje que hemos escrito
-  public sendMsg(){
-
-    //El propio jugador sabe si es el p0 o el p1
-    this.game.chat.push(this.player);
-    this.game.chat.push(this.newMsg);
-
-    this.newMsg="";
-    this.fs.updateGame(this.game);
-  }
 
 
 
