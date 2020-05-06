@@ -3,17 +3,26 @@
 
 <div class="setSelector">
 
-  
+
   <h4 class="titleSetSelector">Elige el pack de personajes con el que quieres jugar</h4>
 
   <!-- Sets -->
   <div class="divSets">
 
+    <!-- Recorremos Sets y vamos mostrando cada uno de los sets -->
     <div *ngFor="let set of Sets;" class="divSet">
+      <!-- Foto de cada set, si hacemos click en uno llamamos a la función select y le pasamos el id del set seleccionado -->
       <img class="set" src={{set.route}} alt="set {{set.id}}" (click)="select(set.id)">
-
+      <!-- Nombre de cada set según su id -->
       <h2 class="nameSet">SET {{set.id}}</h2>
+
+      <!-- Mostramos un candado encima del set 2 si somos de un nivel inferior al 2 para que el usuario no pueda seleccionarlo -->
+      <div *ngIf="set.id==2 && global.actualUser.level<2" class="setLocked">
+        <img  class= "lock" src="{{lock_picture}}">
+      </div>
+
     </div>
+
 
   </div>
 

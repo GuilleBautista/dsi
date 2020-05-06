@@ -4,9 +4,11 @@
 <!-- Imagen fondo de pantalla -->
 <div class="wallpaperP">
 
+
+  <!-- Tarjeta -->
   <div *ngIf="user!=undefined" class="card">
 
-
+    <!-- Nombre de usuario, nivel y foto de perfil -->
     <h2 class="usernameProfile"> {{user.username}} </h2>
 
     <h2 class="levelProfile"> NIVEL {{user.level}}</h2>
@@ -15,14 +17,19 @@
       <img class="userPhotoProfile"src="{{user.profilePhotoURL}}">
     </div>
 
+    <!-- Nivel -->
     <div class="divLevel">
-      <mat-progress-bar class="levelBar" mode="determinate" value="{{user.points}}" color="warn"></mat-progress-bar>
-      <p class="pointsProfile"> {{user.points}} PUNTOS de 100 </p>
+      <!-- Barra de puntuación, dividimos los puntos del usuario entre su nivel para calcular la proporción de puntos, ya que la barra de progreso va hasta 100 -->
+      <mat-progress-bar class="levelBar" mode="determinate" value="{{user.points / user.level}}" color="warn"></mat-progress-bar>
+      <!-- Puntos actuales y puntuación máxima según el nivel, por eso multiplicamos el nivel del usuario por 100 -->
+      <p class="pointsProfile"> {{user.points}} PUNTOS de {{user.level * 100}} </p>
     </div>
 
+    <!-- Botón 'Editar', abre el popup de editar perfil -->
     <button class="buttonE" mat-raised-button color="warn" (click)='edit()'>Editar</button>
 
   </div>
+
 
 </div>
 

@@ -22,18 +22,20 @@
 }
 
 .inputNum{
-  width: 40%;
-  height: 22%;
-  left: 28%;
+  width: 35%;
+  height: auto;
+  left: 32%;
   position: relative;
   font-size: 200%;
+  border: 2px solid;
+  background: white;
 }
 
 .buttonA{
-  position: relative;
-  top: 30%;
+  position: absolute;
+  top: 40%;
   width: 20%;
   height: 16%;
   font-size: 160%;
-  right: 3%;
+  left: 40%;
 }

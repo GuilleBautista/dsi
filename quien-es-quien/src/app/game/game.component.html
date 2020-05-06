@@ -16,12 +16,12 @@
       </ng-container>
       <br>
     </ng-container>
-    
+
   </div>
 
   <h2 *ngIf="game!=undefined" class="room">SALA {{game.room}}</h2>
   <button *ngIf="selecting==false" class="buttonResolve" mat-raised-button (click)="openSnackBar(); toggleSelecting()">RESOLVER</button>
-  <button *ngIf="selecting==true" class="buttonResolve" mat-raised-button (click)='toggleSelecting()'>CANCEL</button>
+  <button *ngIf="selecting==true" class="buttonResolve" mat-raised-button (click)='openSnackBar2(); toggleSelecting()'>CANCELAR</button>
 
   <img class="playerNpc" src="{{playerNpc}}">
 
@@ -33,11 +33,11 @@
 
     <ng-container *ngFor="let m of chat">
 
-      <div *ngIf="m[0]==player" class="msgRight"> 
-        <p>{{m[1]}}</p> 
+      <div *ngIf="m[0]==player" class="msgRight">
+        <p>{{m[1]}}</p>
       </div>
-      <div *ngIf="m[0]!=player" class="msgLeft"> 
-        <p>{{m[1]}}</p> 
+      <div *ngIf="m[0]!=player" class="msgLeft">
+        <p>{{m[1]}}</p>
       </div>
 
     </ng-container>

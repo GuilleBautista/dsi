@@ -12,6 +12,8 @@ import { CookieService } from 'ngx-cookie-service';
 
 
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+
 
 import { Router, ActivatedRoute } from '@angular/router';
 import {debugging as debug, height, width} from '../global';
@@ -48,9 +50,9 @@ export class GameComponent implements OnInit {
 
   constructor(private fs: FirestoreService, public router: Router, public route: ActivatedRoute,
     private cookieService: CookieService, private firebase: AngularFirestore,
-    private snackBar: MatSnackBar, public global: GlobalService) {
+    private snackBar: MatSnackBar, public dialogW: MatDialog, public dialogT: MatDialog, public dialogL: MatDialog, public global: GlobalService) {
 
-    //-------------------------Deprecated-------------------------------- 
+    //-------------------------Deprecated--------------------------------
     if(history.state.data != undefined ){
       //Comprobamos si se han pasado los parámetros por la url.
 
@@ -73,7 +75,7 @@ export class GameComponent implements OnInit {
       }
 
     }
-    //-------------------------Deprecated-------------------------------- 
+    //-------------------------Deprecated--------------------------------
 
 
 
@@ -241,12 +243,14 @@ export class GameComponent implements OnInit {
       if(this.matrix[i][j].url==this.goal){
         //Has ganado
         alert("WINNER WINNER CHICKEN DINNER !!");
-        this.end();
+        //this.end();
+        this.openWinner();
       }
       else{
         //Has perdido
         alert("Perdiste compañero");
-        this.end();
+        //this.end();
+        this.openTryAgain();
       }
     }
   }
@@ -265,6 +269,93 @@ export class GameComponent implements OnInit {
   }
 
 
+
+  //FUNCIONES POPUPS
+
+  //Función para abrir el popup de cuando el usuario ha adivinado el personaje y gana la partida
+  public openWinner(){
+    const dialogRef = this.dialogW.open(winnerDialog, {
+      width: '30%'
+    });
+    // Llamamos a la función 
+    dialogRef.afterClosed().subscribe(result=>{
+      this.increasePoints(result);
+    });
+  }
+
+  //Función para abrir el popup de cuando el usuario no ha adivinado el personaje
+  public openTryAgain(){
+    const dialogRef = this.dialogT.open(tryAgainDialog, {
+      width: '30%'
+    });
+    dialogRef.afterClosed().subscribe(result=>{
+      this.reducePoints(result);
+    });
+  }
+
+  //Función para abrir el popup de cuando el usuario ha perdido la partida
+  public openLoser(){
+    const dialogRef = this.dialogL.open(loserDialog, {
+      width: '30%'
+    });
+    dialogRef.afterClosed().subscribe(result=>{
+      this.reducePoints(result);
+    });
+  }
+
+
+  //Función para restar puntos al usuario
+  public reducePoints(points:number){
+
+    console.log("puntos antes ", this.global.actualUser.points);
+
+    let actualPoints = this.global.actualUser.points;
+
+    if (actualPoints > points) {
+      this.global.actualUser.points = actualPoints - points;
+      console.log("puntos despues de restar ", this.global.actualUser.points);
+    }
+    else{
+      this.global.actualUser.points = 0;
+      console.log("puntos despues de restar teniendo menos de 10 puntos ", this.global.actualUser.points);
+    }
+
+    this.fs.updateUser(this.global.actualUser);
+  }
+
+
+  //Función para sumar puntos al usuario
+  public increasePoints(points:number){
+
+    console.log("puntos antes ", this.global.actualUser.points);
+    console.log("nivel antes ", this.global.actualUser.level);
+
+
+    let actualPoints = this.global.actualUser.points;
+    let actualLevel = this.global.actualUser.level;
+
+    let maxPointsLevel = actualLevel * 100;
+
+    if (actualPoints + points < maxPointsLevel) {
+      this.global.actualUser.points = actualPoints + points;
+    }
+    else{
+      actualPoints += points;
+      while (actualPoints >= maxPointsLevel) {
+        actualLevel += 1;
+        actualPoints -= maxPointsLevel;
+        maxPointsLevel = actualLevel * 100;
+      }
+      this.global.actualUser.points = actualPoints;
+      this.global.actualUser.level = actualLevel;
+    }
+
+    this.fs.updateUser(this.global.actualUser);
+  }
+
+
+
+
   //Función que muestra mensaje cuando pulsas en el botón de 'RESOLVER'
   public openSnackBar() {
      this.snackBar.open("Selecciona el personaje misterioso que crees que tiene tu rival", "", {
@@ -272,6 +363,15 @@ export class GameComponent implements OnInit {
    });
 
   }
+
+  //Función que muestra mensaje cuando pulsas en el botón de 'CANCELAR'
+  public openSnackBar2() {
+     this.snackBar.open("Has salido del modo resolver", "", {
+       duration: 4000,
+   });
+
+  }
+
 
 
 
@@ -292,6 +392,91 @@ export class GameComponent implements OnInit {
 
 
 
+
+
+}//End game class
+
+
+//WINNER------------------------------------------------------------------------
+
+//Componente auxiliar para winner
+@Component({
+  selector: 'app-game-winner',
+  templateUrl: './game.component.winner.html',
+  styleUrls: ['./game.component.winner.scss']
+})
+
+//Clase del popup del winner
+export class winnerDialog implements OnInit{
+
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<winnerDialog>, private router: Router, private route: ActivatedRoute, private fs: FirestoreService, public global: GlobalService){}
+
+
+  ngOnInit(){}
+
+  onNoClick(): void {
+    this.dialogRef.close(50);
+  }
+
+  public end(){
+    this.router.navigate(['/principalpage']);
+  }
+
+}
+
+
+
+//TRY AGAIN---------------------------------------------------------------------
+
+//Componente auxiliar para tryAgain
+@Component({
+  selector: 'app-game-tryAgain',
+  templateUrl: './game.component.tryAgain.html',
+  styleUrls: ['./game.component.tryAgain.scss']
+})
+
+//Clase del popup del winner
+export class tryAgainDialog implements OnInit{
+
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<tryAgainDialog>, private router: Router, private route: ActivatedRoute, private fs: FirestoreService, public global: GlobalService){}
+
+
+  ngOnInit(){}
+
+
+  onNoClick(): void {
+    this.dialogRef.close(10);
+  }
+
+}
+
+//LOSER-------------------------------------------------------------------------
+
+//Componente auxiliar para loser
+@Component({
+  selector: 'app-game-loser',
+  templateUrl: './game.component.loser.html',
+  styleUrls: ['./game.component.loser.scss']
+})
+
+//Clase del popup del loser
+export class loserDialog implements OnInit{
+
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<loserDialog>, private router: Router, private route: ActivatedRoute){}
+
+
+  ngOnInit(){}
+
+  onNoClick(): void {
+    this.dialogRef.close(25);
+  }
+
+  public end(){
+    this.router.navigate(['/principalpage']);
+  }
 
 
 }

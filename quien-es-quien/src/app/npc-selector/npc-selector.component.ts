@@ -33,19 +33,19 @@ export class NpcSelectorComponent implements OnInit {
       //Cogemos el set de la url
       this.set=history.state.data.set;
     }
-    
+
     //Inicializamos una matriz de personajes
     this.matrix=[];
     for(let i=0; i<height; i++){
       this.matrix.push([]);
       for(let j=0; j<width; j++){
-       
+
         let npc={
           "url": "",
           "state":0
         };
 
-        this.matrix[i].push(npc);         
+        this.matrix[i].push(npc);
       }
     }
 
@@ -59,7 +59,7 @@ export class NpcSelectorComponent implements OnInit {
   ngOnInit(): void {
 
     this.initializeMatrix();
-        
+
   }
 
   /*
@@ -89,26 +89,26 @@ export class NpcSelectorComponent implements OnInit {
   Devuelve por la url:
     data: estructura de datos que contiene=>
     {
-      npc:string contiene la url de la imagen del personaje elegido, 
+      npc:string contiene la url de la imagen del personaje elegido,
       set:number contiene el set elegido anteriormente
     }
   Recibe:
     url:string contiene la url de la imagen del personaje elegido. Viene del propio html.
-  
+
   Descripción:
     Funcion para seleccionar el npc con el que se creará la pagina de juego.
     Esta función redirecciona automáticamente a la pagina de juego.
-    Recibe como argumento la url del personaje seleccionado y 
+    Recibe como argumento la url del personaje seleccionado y
       la reenvia a través de la URL de la pagina al componente del juego.
   */
-  public select(url:string){  
+  public select(url:string){
     //creamos una estructura de datos para pasar por la url
     let data={
-      npc: url, //npc:string contiene la url del personaje elegido, 
+      npc: url, //npc:string contiene la url del personaje elegido,
       set: this.set //set:number contiene el set elegido anteriormente
       }
-    this.router.navigate(['/game'], 
-      { 
+    this.router.navigate(['/game'],
+      {
         state: { data: data }//Pasamos los datos por la url
 
       }   // No se muestran en la URL

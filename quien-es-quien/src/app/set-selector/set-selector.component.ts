@@ -2,6 +2,8 @@ import { Component, OnInit} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {FirestoreService} from '../services/firestore/firestore.service';
 
+import { GlobalService } from '../services/global/global.service';
+
 
 
 @Component({
@@ -13,20 +15,29 @@ import {FirestoreService} from '../services/firestore/firestore.service';
 
 
 export class SetSelectorComponent implements OnInit {
-  
+
   //Matriz para el tablero
   public Sets:Array<any>;
-  
-  
-  constructor(public router: Router, public route: ActivatedRoute, private fs: FirestoreService) {
+
+  //Imagen candado
+  public lock_picture:string;
+
+
+  //Constructor
+  constructor(public router: Router, public route: ActivatedRoute, private fs: FirestoreService, public global: GlobalService) {
 
     this.Sets=[];
-     
+
+    //Cargamos la imagen del candado para marcar el set bloqueado
+    this.fs.getImg("img/lock.svg").subscribe(url=>{
+      this.lock_picture=url;
+    });
+
   }
 
   ngOnInit(): void {
     for(let i=0; i<3; i++){
-      
+
       this.fs.getImg("sets/"+i+".png").subscribe(url=>{
         let set={
           "route":url,
@@ -41,7 +52,7 @@ export class SetSelectorComponent implements OnInit {
   select(id:string){
     //Creamos una estructura de datos para devolver
     let data={
-      set: id   
+      set: id
     }
     this.router.navigate(['/npc-selector'],
       { state: { data: data }}   // No se muestran en la URL

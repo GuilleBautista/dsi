@@ -12,7 +12,7 @@ import { GlobalService } from '../services/global/global.service';
 })
 export class RoomSelectorComponent implements OnInit {
 
-  constructor(private fs: FirestoreService, private cookieService: CookieService, public router: Router, 
+  constructor(private fs: FirestoreService, private cookieService: CookieService, public router: Router,
     public route: ActivatedRoute, private global:GlobalService) {
 
    }
@@ -32,9 +32,9 @@ export class RoomSelectorComponent implements OnInit {
       this.global.renewCookies(this.cookieService);
 
       // Con la cookie cambiada redirigimos a la partida
-      this.router.navigate(['/game']);
-    });    
-    
+      this.router.navigate(['/npc-selector']);
+    });
+
   }
-  
+
 }

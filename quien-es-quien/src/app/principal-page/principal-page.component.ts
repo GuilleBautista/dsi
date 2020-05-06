@@ -41,24 +41,20 @@ export class PrincipalPageComponent implements OnInit {
   //Función para crear una nueva partida  ??
   public async newGame(){
 
-<<<<<<< HEAD
-    //this.game = new Game(this.global.actualUser.id, "", "", "", 0, [], "");
-    this.game = new Game();
-=======
     let game={
-      id:this.global.actualUser.id, 
-      id_creator:"", 
-      id_joined:"", 
-      character_creator:"", 
-      set:0, 
-      chat:[], 
+      id:this.global.actualUser.id,
+      id_creator:"",
+      id_joined:"",
+      character_creator:"",
+      set:0,
+      chat:[],
       character_joined:"",
       //TODO: cambiar la forma de generar esto
       room: (Math.floor(Math.random()*100000)).toString()
     }
 
     this.game = new Game(game);
->>>>>>> matchmaking
+
     let id = await this.fs.createGame(this.game);
 
     //Creamos la cookie partida para guardar el id de la nueva partida
@@ -67,7 +63,7 @@ export class PrincipalPageComponent implements OnInit {
     this.cookieService.set("player", "1");
 
     this.global.renewCookies(this.cookieService);
-    
+
   }
 
 

@@ -112,7 +112,7 @@ public getRooms(room:string) : Observable<any>{
 
   public getOrderedUsers():Observable<User[]>{
 
-    return this.firestore.collection<User>('usuarios',ref=>ref.orderBy('points', 'desc')).valueChanges();
+    return this.firestore.collection<User>('usuarios',ref=>ref.orderBy('level', 'desc').orderBy('points', 'desc')).valueChanges();
   }
 
 
