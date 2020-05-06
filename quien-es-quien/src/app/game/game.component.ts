@@ -207,7 +207,7 @@ export class GameComponent implements OnInit {
 
     this.firebase.firestore.collection('game').doc(this.game.idGame).onSnapshot(snapshot=>{
       //Si el cambio no es un mensaje nuestro o nuestra primera conexión
-      if(!this.sent && !this.first_connection){
+      if(!this.sent && !this.first_connection && snapshot.data()!=undefined){
 
         //Comprobamos si el cambio ha sido de tipo ganador
         if(snapshot.data().winner!=""){
@@ -215,9 +215,11 @@ export class GameComponent implements OnInit {
           //Si el ganador no somos nosostros esque hemos perdido
           if(snapshot.data().winner!=this.player){
             console.log("has perdido bro");
+
+            this.fs.deleteGame(this.game);
+
+            this.end(false);
           }
-          this.fs.deleteGame(this.game);
-          this.end(false);
         }
         else{//Eventos de tipo mensaje
 
@@ -232,7 +234,6 @@ export class GameComponent implements OnInit {
           }
 
           if(msg!=undefined && msg!=""){
-            console.log(msg);
             this.chat.push([foe, msg]);
           }
         }
@@ -337,18 +338,22 @@ export class GameComponent implements OnInit {
   private end(win:boolean){
     if(win){
       this.game.winner=this.player;
+      this.fs.updateGame(this.game);
+      
     }
 
-    this.fs.updateGame(this.game);
+    this.sent=true;
+
 
     //Eliminamos las cookies de la partida
-    let uid = this.cookieService.delete("player");
-    let page = this.cookieService.delete("cookieGame");
-    //Renovamos el resto
-    this.global.renewCookies(this.cookieService);
+    this.cookieService.delete("player");
+    this.cookieService.delete("cookieGame");
 
     //Devolvemos al usuario a la pagina principal
     this.cookieService.set("page", '/principalpage', cookie_time);
+    this.cookieService.set("uid", this.cookieService.get("uid"), cookie_time);
+
+
     this.router.navigate(['/principalpage']);
   }
 
