@@ -243,9 +243,9 @@ export class GameComponent {
     this.firebase.firestore.collection('game').doc(this.game.idGame).onSnapshot(snapshot=>{
       //Si el cambio no es un mensaje nuestro o nuestra primera conexión
       if(!this.sent && !this.first_connection && snapshot.data()!=undefined){
-
+      
         //Comprobamos si el cambio ha sido de tipo ganador
-        if(snapshot.data().winner!=""){
+          if(snapshot.data().winner!=""){
 
           //Si el ganador no somos nosostros esque hemos perdido
           if(snapshot.data().winner!=this.player){
