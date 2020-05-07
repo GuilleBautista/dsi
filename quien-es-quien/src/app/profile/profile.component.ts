@@ -45,14 +45,14 @@ export class ProfileComponent implements OnInit {
   public user: User;
 
 
-  constructor(private fs: FirestoreService, private router: Router, private route: ActivatedRoute, 
+  constructor(private fs: FirestoreService, private router: Router, private route: ActivatedRoute,
     public global: GlobalService, public dialog: MatDialog, private cookieService: CookieService) {
 
       this.loadSesion(
         this.cookieService.get("uid"),
         this.cookieService.get("game")
       );
-         
+
   }
 
   ngOnInit(): void {
@@ -70,7 +70,7 @@ export class ProfileComponent implements OnInit {
     });
 
     //actualizamos el usuario despues de editar
-    
+
 
   }
 
@@ -117,7 +117,7 @@ export class ProfileComponent implements OnInit {
         });
 
       }
-    
+
     }).catch(error=>{
       console.log("Error iniciando sesion:",error);
       //Si hay un error eliminamos las cookies y vamos a la pagina de inicio
@@ -142,6 +142,12 @@ export class ProfileComponent implements OnInit {
     //TODO: cargar partida
   }
 
+}
+
+public logOut(){
+  this.cookieService.deleteAll();
+  this.cookieService.set("page", "/", cookie_time);
+  this.router.navigate(["/"]);
 }
 
 
@@ -188,6 +194,7 @@ export class ProfileComponent implements OnInit {
       this.password = this.global.actualUser.password;
 
       this.user=this.global.actualUser;
+
     }
 
     ngOnInit() {
@@ -235,7 +242,7 @@ export class ProfileComponent implements OnInit {
       if(this.data.newPassword != undefined && this.data.newPassword != ""){
         this.user.password = this.data.newPassword;
       }
-  
+
       if(this.alreadyUser){
         //Si hay un error lo notificamos
         //TODO: notificar en el popup
@@ -243,7 +250,7 @@ export class ProfileComponent implements OnInit {
       }
       else{
         //Si el usuario no esta repetido lo actualizamos
-        this.fs.updateUser(this.user);
+        await this.fs.updateUser(this.user);
         //Cerramos el popup
         this.onNoClick();
       }
@@ -254,13 +261,18 @@ export class ProfileComponent implements OnInit {
         let profilePhotoRef = this.storageRef.ref('profilePhotos/' + this.global.actualUser.id);
 
         let file = this.selectedFile;
-        
+
         //Cambiamos la foto de perfil
         await profilePhotoRef.put(file).then(x=>{
           //Nos subscribimos al cambio, ya que la foto puede tardar en subirse
-          this.fs.getImg("profilePhotos/"+this.user.id).subscribe(url=>{
+          this.fs.getImg("profilePhotos/"+this.user.id).subscribe(async url=>{
             //Actualizamos la foto de la variable global
             this.global.actualUser.profilePhotoURL=url;
+
+            await this.fs.updateUser(this.global.actualUser);
+
+            console.log(this.global.actualUser.profilePhotoURL);
+
           });
         });
 

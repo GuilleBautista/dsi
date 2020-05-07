@@ -28,7 +28,6 @@ export class HeaderComponent implements OnInit {
       this.cookieService.get("uid"),
       this.cookieService.get("game")
     );
-    
   }
 
   ngOnInit(): void{
@@ -78,7 +77,7 @@ export class HeaderComponent implements OnInit {
         });
 
       }
-    
+
     }).catch(error=>{
       console.log("Error iniciando sesion:",error);
       //Si hay un error eliminamos las cookies y vamos a la pagina de inicio
