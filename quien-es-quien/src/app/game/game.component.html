@@ -25,28 +25,29 @@
 
   <img class="playerNpc" src="{{playerNpc}}">
 
-  <img *ngIf="debug==true" class="goal" src="{{playerNpc}}">
+  <!-- <img *ngIf="debug==true" class="goal" src="{{playerNpc}}"> -->
 
   <div class="chat">
     <h1 class="titleChat">CHAT</h1>
 
+    <div class="divMsg">
+      <ng-container *ngFor="let m of chat">
 
-    <ng-container *ngFor="let m of chat">
+        <div *ngIf="m[0]==player" class="msgRight">
+          <p>{{m[1]}}</p>
+        </div>
+        <div *ngIf="m[0]!=player" class="msgLeft">
+          <p>{{m[1]}}</p>
+        </div>
 
-      <div *ngIf="m[0]==player" class="msgRight">
-        <p>{{m[1]}}</p>
-      </div>
-      <div *ngIf="m[0]!=player" class="msgLeft">
-        <p>{{m[1]}}</p>
-      </div>
-
-    </ng-container>
+      </ng-container>
+    </div>
 
     <form (ngSubmit)="getMsg($event)">
-        
-      <input matInput placeholder="123" class="inputNum" required>
 
-      <button class="buttonA" mat-raised-button type="submit">Aceptar</button>
+      <input matInput placeholder="Escribe un mensaje" class="inputChat">
+
+      <button class="buttonS" mat-flat-button type="submit"> <img src="/assets/img/send.svg" class="send"> </button>
     </form>
 
   </div>

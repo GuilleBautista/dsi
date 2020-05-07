@@ -52,7 +52,7 @@ export class FirestoreService {
 //Funciones partida
 
 public createGame(data: Game):Promise<string>{
-  data.idGame='1';
+  data.idGame=this.firestore.createId();
   console.log("partida:", data)
   return this.afsG.doc(data.idGame).set({... data}).then(r=>{
     return data.idGame;
@@ -91,7 +91,7 @@ public deleteGame(game:Game):void{
   public createUser(data: User):Promise<string>
   {
     data.id=this.firestore.createId();
-    return this.afsU.doc(data.id).set({data}).then(r=>{
+    return this.afsU.doc(data.id).set({... data}).then(r=>{
       return data.id;
     });
   }
@@ -194,7 +194,7 @@ public deleteGame(game:Game):void{
 
   }
 
-  
+
 
 //-------------------------Storage Functions-------------------------
 

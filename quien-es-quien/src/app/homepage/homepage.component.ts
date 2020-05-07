@@ -294,6 +294,9 @@ export class registerDialog implements OnInit {
       this.user.level = 1;
       this.user.points = 0;
 
+      console.log(this.user);
+
+
       this.firestoreService.createUser(this.user);
       this.global.actualUser = this.user;
 
