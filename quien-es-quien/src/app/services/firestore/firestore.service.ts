@@ -88,12 +88,11 @@ public deleteGame(game:Game):void{
 
 //Funciones usuarios
 
-  public createUser(data: User):Promise<string>
+  public createUser(data: User):string
   {
     data.id=this.firestore.createId();
-    return this.afsU.doc(data.id).set({... data}).then(r=>{
-      return data.id;
-    });
+    this.afsU.doc(data.id).set({... data});
+    return data.id;
   }
 
 

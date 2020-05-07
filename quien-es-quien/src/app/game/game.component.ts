@@ -296,36 +296,49 @@ export class GameComponent {
   */
   private sendMsg(msg:string){
 
-    console.log("player: ", this.player)
+    this.fs.getGame(this.game.idGame).then(game=>{
 
-    if(this.player=="0"){
-      this.game.chat0=msg;
-    }else{
-      this.game.chat1=msg;
-    }
+      if(this.player=="0"){
+       game.chat0=msg;
+      }else{
+        game.chat1=msg;
+      }
+  
+      this.fs.updateGame(game);
+  
+      //TODO: apendear el mensaje como local
+    })
 
-    this.fs.updateGame(this.game);
-
-    //TODO: apendear el mensaje como local
     this.chat.push( [this.player, msg] )
+
+
+    
   }
 
   //Devuelve la url del personaje del oponente
-  private getOponent():string{
-    console.log("this game:",this.game);
+  // private async getOponent(url:string): Promise<boolean>{
+  //   console.log("this game:",this.game);
 
+  //   await 
 
-    if(this.player=="0"){
-      console.log("character_creator:",this.game.character_creator);
+  //     this.game=game;
 
-      return this.game.character_creator;
-    }
-    else{
-      console.log("character_joined:",this.game.character_joined);
+  //     console.log("game cogido:", game)
 
-      return this.game.character_joined;
-    }
-  }
+  //     if(this.player=="0"){
+  //       console.log("character_creator:",this.game.character_creator);
+
+  //       return this.game.character_creator==url;
+  //     }
+  //     else{
+  //       console.log("character_joined:",this.game.character_joined==url);
+
+  //       return this.game.character_joined==url;
+  //     }
+
+  //   })
+
+  // }
 
 
   //----------------------------Interaccion con el tablero:--------------------------------
@@ -347,14 +360,31 @@ export class GameComponent {
       }
     }
     else{ //Si estamos seleccionando el personaje para resolver comprobamos si es el correcto
+      this.fs.getGame(this.game.idGame).then(game=>{
+      
+        if(this.player=="0"){
 
-      if(this.matrix[i][j].url==this.getOponent()){
-        this.openWinner();
-      }
-      else{
-        this.openTryAgain();
-      }
-    }
+          if(this.matrix[i][j].url==game.character_creator){
+            this.openWinner();
+          }
+          else{
+            this.openTryAgain();
+          }
+        }
+        else{
+
+          if(this.matrix[i][j].url==game.character_joined){
+            this.openWinner();
+          }
+          else{
+            this.openTryAgain();
+          }
+
+        }
+        
+      });
+
+    } 
   }
 
   //Cambia el estado de selecting

@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 import { GlobalService } from '../services/global/global.service';
 import { FirestoreService } from '../services/firestore/firestore.service'
 import { CookieService } from 'ngx-cookie-service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 
@@ -251,7 +252,8 @@ export class registerDialog implements OnInit {
 
   //Constructor
   constructor(public dialogRef: MatDialogRef<registerDialog>, @Inject(MAT_DIALOG_DATA) public data: DialogData, private firestoreService: FirestoreService,
-              private router: Router, private route: ActivatedRoute, public global: GlobalService,  private cookieService: CookieService)
+              private router: Router, private route: ActivatedRoute, public global: GlobalService,  private cookieService: CookieService,
+              private snackBar: MatSnackBar)
   {
       this.user=new User("", "", "", 0, 0, "","");
       this.users=[];
@@ -263,7 +265,7 @@ export class registerDialog implements OnInit {
       });
     }
 
-  ngOnDestroy(){registerDialog
+  ngOnDestroy(){  registerDialog
       this.sUsers.unsubscribe();
     }
 
@@ -297,13 +299,16 @@ export class registerDialog implements OnInit {
       console.log(this.user);
 
 
-      this.firestoreService.createUser(this.user);
+      this.cookieService.set("uid", this.firestoreService.createUser(this.user), cookie_time);
       this.global.actualUser = this.user;
 
       this.onNoClick();
 
       //Antes de ir a una pagina cambiamos la cookie de la pagina
       this.cookieService.set("page", "/profile", cookie_time);
+      this.snackBar.open("Bienvenido, aquí puedes empezar a personalizar tu perfil", "", {
+        duration: 8000,
+      });
       this.router.navigate(["/profile"]);
 
 
